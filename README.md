@@ -63,6 +63,7 @@ export class SampleComponent
     this.security.setAuthenticated(true);
     this.security.setRoles(['ADMIN', 'USER']);
     this.security.addRole('EDITOR');
+    this.security.setGroups(['GROUP_A', 'GROUP_B']);
   }
   
   logout() {
@@ -88,25 +89,44 @@ You can now use the differents directives.
 
 #### HasRole
 ```html
-<div *secuHasRole="'ADMIN'">I have the role 'ADMIN'</div>
+<div *secuHasRole="'ADMIN'; else roleElse">I have the role 'ADMIN'</div>
+<ng-template #roleElse>
+  <div>I don't have the role 'ADMIN'</div>
+</ng-template>
 ```
 
 
 #### HasRoles
 ```html
-<div *secuHasRoles="['CREATOR', 'EDITOR']">I have the role 'CREATOR' and 'EDITOR'</div>
+<div *secuHasRoles="['CREATOR', 'EDITOR']; else roleElse">I have the role 'CREATOR' and 'EDITOR'</div>
+<ng-template #roleElse>
+  <div>I don't have the roles</div>
+</ng-template>
 ```
 
 
 #### HasAnyRoles
 ```html
-<div *secuHasAnyRoles="['CREATOR', 'EDITOR']">I have the role 'CREATOR' or 'EDITOR'</div>
+<div *secuHasAnyRoles="['CREATOR', 'EDITOR']; else roleElse">I have the role 'CREATOR' or 'EDITOR'</div>
+<ng-template #roleElse>
+  <div>I don't have the roles</div>
+</ng-template>
 ```
 
 
 #### HasNotRole
 ```html
 <div *secuHasNotRole="'POWERUSER'">I don't have the role 'POWERUSER'</div>
+```
+
+
+#### IsMemberOf
+```html
+<div *secuIsMemberOf="'GROUP_A'">I am a member of 'GROUP_A'</div>
+<div *secuIsMemberOf="['GROUP_A', 'GROUP_B']; else groupElse">I am a member of 'GROUP_A' and 'GROUP_B'</div>
+<ng-template #groupElse>
+  <div>I am not a member of those groups</div>
+</ng-template>
 ```
 
 
