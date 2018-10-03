@@ -1,11 +1,12 @@
 import { inject, TestBed } from '@angular/core/testing';
 
 import { NgxSecurityGuard } from './ngx-security.guard';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('NgxSecurityGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [NgxSecurityGuard]
+      imports: [RouterTestingModule]
     });
   });
 
