@@ -1,23 +1,30 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { NgxSecurityState } from '../models/ngx-security.model';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityService
 {
-  private stateSource: BehaviorSubject<NgxSecurityState>;
-  public state$: Observable<NgxSecurityState>;
+  private readonly stateSource: BehaviorSubject<void>;
+  public readonly state$: Observable<void>;
 
   private readonly INITIAL_STATE: NgxSecurityState = {
     authenticated: false,
+
     roles: [],
-    groups: []
+    groups: [],
+    permissions: [],
+
+    authenticationChecker: null,
+    rolesChecker: null,
+    groupsChecker: null,
+    permissionsChecker: null
   };
 
   private securityState: NgxSecurityState;
 
   constructor() {
-    this.stateSource = new BehaviorSubject<NgxSecurityState>(null);
+    this.stateSource = new BehaviorSubject<void>(null);
     this.state$ = this.stateSource.asObservable();
     this.reset();
   }
@@ -27,16 +34,33 @@ export class NgxSecurityService
   }
 
 
+  public setAuthenticatedChecker(fn: () => Observable<boolean>): void {
+    this.updateState({ authenticationChecker: fn });
+  }
 
   public setAuthenticated(value: boolean): void {
     this.updateState({ authenticated: value });
   }
 
-  public isAuthenticated(): boolean {
-    return this.securityState.authenticated;
+  public isAuthenticated(): Observable<boolean> {
+    // Check inside state
+    const check = this.securityState.authenticated;
+    if (check)
+      return of(check);
+
+    // Check with callback
+    if (this.securityState.authenticationChecker)
+      return this.securityState.authenticationChecker();
+
+    // Default
+    return of(false);
   }
 
 
+
+  public setRolesChecker(fn: (name: string) => Observable<boolean>): void {
+    this.updateState({ rolesChecker: fn });
+  }
 
   public addRole(role: string): void {
     this.updateState({ roles: [...this.securityState.roles, role] });
@@ -50,11 +74,26 @@ export class NgxSecurityService
     this.setRoles([]);
   }
 
-  public hasRole(role: string): boolean {
-    return this.securityState.roles.some((r: string) => r.toUpperCase() === role);
+  public hasRole(role: string): Observable<boolean> {
+    // Check inside state
+    const check = this.securityState.roles.some((r: string) => r.toUpperCase() === role);
+    if (check)
+      return of(check);
+
+    // Check with callback
+    if (this.securityState.rolesChecker)
+      return this.securityState.rolesChecker(role);
+
+    // Default
+    return of(false);
   }
 
 
+
+
+  public setGroupsChecker(fn: (name: string) => Observable<boolean>): void {
+    this.updateState({ groupsChecker: fn });
+  }
 
   public addGroup(group: string): void {
     this.updateState({ groups: [...this.securityState.groups, group] });
@@ -68,21 +107,65 @@ export class NgxSecurityService
     this.setGroups([]);
   }
 
-  public isMemberOf(group: string): boolean {
-    return this.securityState.groups.some((g: string) => g.toUpperCase() === group);
+  public isMemberOf(group: string): Observable<boolean> {
+    // Check inside state
+    const check = this.securityState.groups.some((r: string) => r.toUpperCase() === group);
+    if (check)
+      return of(check);
+
+    // Check with callback
+    if (this.securityState.groupsChecker)
+      return this.securityState.groupsChecker(group);
+
+    // Default
+    return of(false);
   }
 
 
 
-  private updateState(partialState: Partial<NgxSecurityState>): void {
+
+  public setPermissionChecker(fn: (name: string) => Observable<boolean>): void {
+    this.updateState({ permissionsChecker: fn });
+  }
+
+  public addPermission(role: string): void {
+    this.updateState({ permissions: [...this.securityState.permissions, role] });
+  }
+
+  public setPermissions(permissions: string[]): void {
+    this.updateState({ permissions: permissions || [] });
+  }
+
+  public clearPermissions(): void {
+    this.setPermissions([]);
+  }
+
+  public hasPermission(name: string): Observable<boolean> {
+    // Check inside state
+    const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name);
+    if (check)
+      return of(check);
+
+    // Check with callback
+    if (this.securityState.permissionsChecker)
+      return this.securityState.permissionsChecker(name);
+
+    // Default
+    return of(false);
+  }
+
+
+
+  public updateState(partialState: Partial<NgxSecurityState>): void {
     if (!this.securityState)
       this.securityState = { ...this.INITIAL_STATE };
 
     this.securityState = { ...this.securityState, ...partialState };
-    this.stateChanged();
+    this.touch();
   }
 
-  public stateChanged(): void {
-    this.stateSource.next(this.securityState);
+
+  public touch(): void {
+    this.stateSource.next(null);
   }
 }

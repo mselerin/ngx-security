@@ -4,11 +4,14 @@ import {
   CanActivate,
   CanActivateChild,
   CanLoad,
-  Route, Router,
+  Route,
+  Router,
   RouterStateSnapshot
 } from '@angular/router';
 import { NgxSecurityService } from '../services/ngx-security.service';
 import { NgxSecurityGuardOptions } from '../models/ngx-security.model';
+import { merge, Observable } from 'rxjs';
+import { every, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
@@ -19,50 +22,63 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
   ) {}
 
 
-  canLoad(route: Route): boolean { return this.canAccess(route); }
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean { return this.canAccess(route, state); }
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean { return this.canAccess(route, state); }
+  canLoad(route: Route): Observable<boolean> { return this.canAccess(route); }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> { return this.canAccess(route, state); }
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> { return this.canAccess(route, state); }
 
 
-  protected canAccess(route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot): boolean {
+  protected canAccess(route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot): Observable<boolean> {
     const guardOptions = !!route && route.data ? route.data['security'] as NgxSecurityGuardOptions : {};
-    const access = this.checkAccess(guardOptions);
+    return this.checkAccess(guardOptions).pipe(
+      tap(access => {
+        if (!access) {
+          let path = (state ? state.url : null);
+          if (!path && route) {
+            path = '/' + (route as Route).path;
+          }
 
-    if (!access) {
-      let path = (state ? state.url : null);
-      if (!path && route) {
-        path = '/' + (route as Route).path;
-      }
+          console.warn('Unauthorized access', path);
 
-      console.warn('Unauthorized access', path);
+          if (guardOptions.unauthorizedHandler) {
+            guardOptions.unauthorizedHandler(route, state);
+          }
 
-      if (guardOptions.unauthorizedHandler) {
-        guardOptions.unauthorizedHandler(route, state);
-      }
-
-      if (guardOptions.redirectTo)
-        this.router.navigateByUrl(guardOptions.redirectTo);
-    }
-    else {
-      if (guardOptions.authorizedHandler) {
-        guardOptions.authorizedHandler(route, state);
-      }
-    }
-
-    return access;
+          if (guardOptions.redirectTo)
+            this.router.navigateByUrl(guardOptions.redirectTo);
+        }
+        else {
+          if (guardOptions.authorizedHandler) {
+            guardOptions.authorizedHandler(route, state);
+          }
+        }
+      })
+    );
   }
 
 
-  private checkAccess(guardOptions: NgxSecurityGuardOptions): boolean {
-    if (guardOptions.authenticated === true && !this.security.isAuthenticated())
-      return false;
+  private checkAccess(guardOptions: NgxSecurityGuardOptions): Observable<boolean> {
+    let allObs$: Observable<boolean>[] = [];
 
-    if (Array.isArray(guardOptions.roles) && !guardOptions.roles.every(role => this.security.hasRole(role)))
-      return false;
+    if (guardOptions.authenticated === true)
+      allObs$.push(this.security.isAuthenticated());
 
-    if (Array.isArray(guardOptions.groups) && !guardOptions.groups.every(group => this.security.isMemberOf(group)))
-      return false;
+    if (Array.isArray(guardOptions.roles)) {
+      let obs$ = guardOptions.roles.map(n => this.security.hasRole(n));
+      allObs$.push(...obs$);
+    }
 
-    return true;
+    if (Array.isArray(guardOptions.groups)) {
+      let obs$ = guardOptions.groups.map(n => this.security.isMemberOf(n));
+      allObs$.push(...obs$);
+    }
+
+    if (Array.isArray(guardOptions.permissions)) {
+      let obs$ = guardOptions.permissions.map(n => this.security.hasPermission(n));
+      allObs$.push(...obs$);
+    }
+
+    return merge(...allObs$).pipe(
+      every(r => r)
+    );
   }
 }

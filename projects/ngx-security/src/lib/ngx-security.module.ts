@@ -4,7 +4,6 @@ import * as Security from './directives/ngx-security.directive';
 @NgModule({
   imports: [],
   declarations: [
-    Security.BaseAuthenticatedDirective,
     Security.BaseSecurityDirective,
     Security.IsAuthenticatedDirective,
     Security.IsAnonymousDirective,
@@ -12,7 +11,8 @@ import * as Security from './directives/ngx-security.directive';
     Security.HasNotRoleDirective,
     Security.HasRolesDirective,
     Security.HasAnyRolesDirective,
-    Security.IsMemberOfDirective
+    Security.IsMemberOfDirective,
+    Security.HasPermissionsDirective
   ],
   exports: [
     Security.IsAuthenticatedDirective,
@@ -21,7 +21,8 @@ import * as Security from './directives/ngx-security.directive';
     Security.HasNotRoleDirective,
     Security.HasRolesDirective,
     Security.HasAnyRolesDirective,
-    Security.IsMemberOfDirective
+    Security.IsMemberOfDirective,
+    Security.HasPermissionsDirective
   ]
 })
 export class NgxSecurityModule { }

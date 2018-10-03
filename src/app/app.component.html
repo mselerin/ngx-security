@@ -13,8 +13,16 @@
 </div>
 
 <div>
-  <b>HasRole('ADMIN') ?</b>&nbsp;
-  <span *secuHasRole="'ADMIN'; else roleElse">YES</span>
+  <b>HasRoles('ADMIN', 'USER') ?</b>&nbsp;
+  <span *secuHasRoles="['ADMIN', 'USER']; else roleElse">YES</span>
+  <ng-template #roleElse>
+    <span>NO</span>
+  </ng-template>
+</div>
+
+<div>
+  <b>HasAnyRoles('X', 'Y', 'Z') ?</b>&nbsp;
+  <span *secuHasAnyRoles="['X', 'Y', 'Z']; else roleElse">YES</span>
   <ng-template #roleElse>
     <span>NO</span>
   </ng-template>
@@ -25,6 +33,16 @@
   <b>IsMemberOf('GROUP_A') ?</b>&nbsp;
   <span *secuIsMemberOf="'GROUP_A'; else memberElse">YES</span>
   <ng-template #memberElse>
+    <span>NO</span>
+  </ng-template>
+</div>
+
+
+
+<div>
+  <b>HasPermission('foo') ?</b>&nbsp;
+  <span *secuHasPermissions="'foo'; else permElse">YES</span>
+  <ng-template #permElse>
     <span>NO</span>
   </ng-template>
 </div>

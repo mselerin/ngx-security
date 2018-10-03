@@ -1,17 +1,20 @@
-import { Subscription } from 'rxjs';
-import { Directive, OnInit, OnDestroy, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+import { merge, Observable, of, Subscription } from 'rxjs';
+import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
 import { NgxSecurityService } from '../services/ngx-security.service';
+import { every, first, map, tap } from 'rxjs/operators';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   protected elseTemplateRef: TemplateRef<any>;
+  protected expectedValue: boolean;
 
   constructor(
     protected security: NgxSecurityService,
     protected templateRef: TemplateRef<any>,
     protected viewContainer: ViewContainerRef
   ) {
+    this.expectedValue = true;
     this.postConstruct();
   }
 
@@ -19,7 +22,9 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (this.security)
-      this.stateSubscription = this.security.state$.subscribe(() => { this.handleStateChange(); });
+      this.stateSubscription = this.security.state$.pipe(
+        tap(() => { this.handleStateChange(); })
+      ).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -27,56 +32,42 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
       this.stateSubscription.unsubscribe();
   }
 
-  protected hasPermission(): boolean {
-    return false;
+  protected hasPermission(): Observable<boolean> {
+    return of(false);
   }
 
   private handleStateChange(): void {
-    this.viewContainer.clear();
+    this.hasPermission().pipe(
+      map(hasPerm => {
+        this.viewContainer.clear();
 
-    if (this.hasPermission())
-      this.viewContainer.createEmbeddedView(this.templateRef);
+        if (hasPerm)
+          this.viewContainer.createEmbeddedView(this.templateRef);
 
-    else if (this.elseTemplateRef)
-      this.viewContainer.createEmbeddedView(this.elseTemplateRef);
-  }
-}
-
-
-@Directive({ selector: '[secuBaseAuthenticated]' })
-export class BaseAuthenticatedDirective extends BaseSecurityDirective {
-  protected authenticatedValue: boolean;
-
-  protected postConstruct(): void {
-    if (this.authenticatedValue == undefined)
-      this.authenticatedValue = true;
-
-    super.postConstruct();
-  }
-
-  hasPermission() {
-    let isAuthenticated = this.security.isAuthenticated();
-    return (isAuthenticated === this.authenticatedValue);
+        else if (this.elseTemplateRef)
+          this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+      })
+    ).subscribe();
   }
 }
 
 
 
 @Directive({ selector: '[secuIsAuthenticated]' })
-export class IsAuthenticatedDirective extends BaseAuthenticatedDirective {
-  protected postConstruct(): void {
-    this.authenticatedValue = true;
-    super.ngOnInit();
+export class IsAuthenticatedDirective extends BaseSecurityDirective {
+  hasPermission(): Observable<boolean> {
+    return this.security.isAuthenticated().pipe(
+      map ((auth: boolean) => auth === this.expectedValue)
+    );
   }
 }
 
 
-
 @Directive({ selector: '[secuIsAnonymous]' })
-export class IsAnonymousDirective extends BaseAuthenticatedDirective {
+export class IsAnonymousDirective extends IsAuthenticatedDirective {
   protected postConstruct(): void {
-    this.authenticatedValue = false;
-    super.ngOnInit();
+    this.expectedValue = false;
+    super.postConstruct();
   }
 }
 
@@ -90,7 +81,7 @@ export class HasRoleDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission() {
+  hasPermission(): Observable<boolean> {
     return this.security.hasRole(this.input);
   }
 }
@@ -105,8 +96,10 @@ export class HasNotRoleDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission() {
-    return !this.security.hasRole(this.input);
+  hasPermission(): Observable<boolean> {
+    return this.security.hasRole(this.input).pipe(
+      map(hasPerm => !hasPerm)
+    );
   }
 }
 
@@ -121,12 +114,15 @@ export class HasRolesDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission() {
+  hasPermission(): Observable<boolean> {
     if (this.input) {
-      return this.input.every((role) => this.security.hasRole(role));
+      let obs$ = this.input.map(r => this.security.hasRole(r));
+      return merge(...obs$).pipe(
+        every(r => r)
+      );
     }
 
-    return false;
+    return of(false);
   }
 }
 
@@ -140,12 +136,15 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission() {
+  hasPermission(): Observable<boolean> {
     if (this.input) {
-      return this.input.some((role) => this.security.hasRole(role));
+      let obs$ = this.input.map(r => this.security.hasRole(r));
+      return merge(...obs$).pipe(
+        first(r => r, false)
+      );
     }
 
-    return false;
+    return of(false);
   }
 }
 
@@ -159,13 +158,42 @@ export class IsMemberOfDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission() {
+  hasPermission(): Observable<boolean> {
     if (Array.isArray(this.input)) {
-      return this.input.every((group) => this.security.isMemberOf(group));
+      let obs$ = this.input.map(r => this.security.hasRole(r));
+      return merge(...obs$).pipe(
+        every(r => r)
+      );
     }
-    else {
+    else if (this.input) {
       return this.security.isMemberOf(this.input);
     }
+
+    return of(false);
   }
 }
 
+
+
+@Directive({ selector: '[secuHasPermissions]' })
+export class HasPermissionsDirective extends BaseSecurityDirective {
+  @Input('secuHasPermissions') input: string | string[];
+
+  @Input('secuHasPermissionsElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  hasPermission(): Observable<boolean> {
+    if (Array.isArray(this.input)) {
+      let obs$ = this.input.map(r => this.security.hasPermission(r));
+      return merge(...obs$).pipe(
+        every(r => r)
+      );
+    }
+    else if (this.input) {
+      return this.security.hasPermission(this.input);
+    }
+
+    return of(false);
+  }
+}
