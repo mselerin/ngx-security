@@ -4,15 +4,14 @@ import { NgxSecurityService } from './ngx-security.service';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
-  private viewCreated: boolean;
   private stateSubscription: Subscription;
+  protected elseTemplateRef: TemplateRef<any>;
 
   constructor(
     protected security: NgxSecurityService,
     protected templateRef: TemplateRef<any>,
     protected viewContainer: ViewContainerRef
   ) {
-    this.viewCreated = false;
     this.postConstruct();
   }
 
@@ -33,16 +32,13 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   }
 
   private handleStateChange(): void {
-    if (this.hasPermission()) {
-      if (!this.viewCreated) {
-        this.viewContainer.createEmbeddedView(this.templateRef);
-        this.viewCreated = true;
-      }
-    }
-    else {
-      this.viewContainer.clear();
-      this.viewCreated = false;
-    }
+    this.viewContainer.clear();
+
+    if (this.hasPermission())
+      this.viewContainer.createEmbeddedView(this.templateRef);
+
+    else if (this.elseTemplateRef)
+      this.viewContainer.createEmbeddedView(this.elseTemplateRef);
   }
 }
 
@@ -90,6 +86,10 @@ export class IsAnonymousDirective extends BaseAuthenticatedDirective {
 export class HasRoleDirective extends BaseSecurityDirective {
   @Input('secuHasRole') input: string;
 
+  @Input('secuHasRoleElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
   hasPermission() {
     return this.security.hasRole(this.input);
   }
@@ -100,6 +100,10 @@ export class HasRoleDirective extends BaseSecurityDirective {
 @Directive({ selector: '[secuHasNotRole]' })
 export class HasNotRoleDirective extends BaseSecurityDirective {
   @Input('secuHasNotRole') input: string;
+
+  @Input('secuHasNotRoleElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
 
   hasPermission() {
     return !this.security.hasRole(this.input);
@@ -112,6 +116,10 @@ export class HasNotRoleDirective extends BaseSecurityDirective {
 @Directive({ selector: '[secuHasRoles]' })
 export class HasRolesDirective extends BaseSecurityDirective {
   @Input('secuHasRoles') input: string[];
+
+  @Input('secuHasRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
 
   hasPermission() {
     if (this.input) {
@@ -128,6 +136,10 @@ export class HasRolesDirective extends BaseSecurityDirective {
 export class HasAnyRolesDirective extends BaseSecurityDirective {
   @Input('secuHasAnyRoles') input: string[];
 
+  @Input('secuHasAnyRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
   hasPermission() {
     if (this.input) {
       return this.input.some((role) => this.security.hasRole(role));
@@ -142,6 +154,10 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
 @Directive({ selector: '[secuIsMemberOf]' })
 export class IsMemberOfDirective extends BaseSecurityDirective {
   @Input('secuIsMemberOf') input: string | string[];
+
+  @Input('secuIsMemberOfElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
 
   hasPermission() {
     if (Array.isArray(this.input)) {

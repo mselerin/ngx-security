@@ -8,8 +8,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit
 {
-  title = 'ngx-security-app';
-
   constructor(
     private security: NgxSecurityService
   ) {}
@@ -21,5 +19,6 @@ export class AppComponent implements OnInit
   switchAuthentication() {
     this.security.setAuthenticated(!this.security.isAuthenticated());
     this.security.setRoles(['ADMIN', 'USER']);
+    this.security.setGroups(['GROUP_A', 'GROUP_B']);
   }
 }
