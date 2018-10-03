@@ -11,7 +11,9 @@ import * as Security from './directives/ngx-security.directive';
     Security.HasAnyRolesDirective,
     Security.HasNotRolesDirective,
     Security.IsMemberOfDirective,
-    Security.HasPermissionsDirective
+    Security.IsNotMemberOfDirective,
+    Security.HasPermissionsDirective,
+    Security.HasNotPermissionsDirective
   ],
   exports: [
     Security.IsAuthenticatedDirective,
@@ -20,7 +22,9 @@ import * as Security from './directives/ngx-security.directive';
     Security.HasAnyRolesDirective,
     Security.HasNotRolesDirective,
     Security.IsMemberOfDirective,
-    Security.HasPermissionsDirective
+    Security.IsNotMemberOfDirective,
+    Security.HasPermissionsDirective,
+    Security.HasNotPermissionsDirective
   ]
 })
 export class NgxSecurityModule { }

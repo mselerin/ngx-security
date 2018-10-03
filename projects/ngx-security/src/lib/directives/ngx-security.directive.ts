@@ -32,12 +32,9 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
       this.stateSubscription.unsubscribe();
   }
 
-  protected hasPermission(): Observable<boolean> {
-    return of(false);
-  }
 
   private handleStateChange(): void {
-    this.hasPermission().pipe(
+    this.isAuthorized().pipe(
       map(hasPerm => {
         this.viewContainer.clear();
 
@@ -49,13 +46,36 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
       })
     ).subscribe();
   }
+
+
+  protected isAuthorized(): Observable<boolean> {
+    return of(false);
+  }
+
+
+  protected testEvery(fn: (name: string) => Observable<boolean>, input: string | string[], expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      every(r => r === expected)
+    );
+  }
 }
 
 
 
 @Directive({ selector: '[secuIsAuthenticated]' })
 export class IsAuthenticatedDirective extends BaseSecurityDirective {
-  hasPermission(): Observable<boolean> {
+  isAuthorized(): Observable<boolean> {
     return this.security.isAuthenticated().pipe(
       map ((auth: boolean) => auth === this.expectedValue)
     );
@@ -77,21 +97,28 @@ export class IsAnonymousDirective extends IsAuthenticatedDirective {
 
 @Directive({ selector: '[secuHasRoles]' })
 export class HasRolesDirective extends BaseSecurityDirective {
-  @Input('secuHasRoles') input: string[];
+  @Input('secuHasRoles') input: string | string[];
 
   @Input('secuHasRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission(): Observable<boolean> {
-    if (this.input) {
-      let obs$ = this.input.map(r => this.security.hasRole(r));
-      return merge(...obs$).pipe(
-        every(r => r)
-      );
-    }
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.hasRole(n)), this.input, true);
+  }
+}
 
-    return of(false);
+
+@Directive({ selector: '[secuHasNotRoles]' })
+export class HasNotRolesDirective extends BaseSecurityDirective {
+  @Input('secuHasNotRoles') input: string | string[];
+
+  @Input('secuHasNotRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.hasRole(n)), this.input, false);
   }
 }
 
@@ -104,38 +131,11 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission(): Observable<boolean> {
+  isAuthorized(): Observable<boolean> {
     if (this.input) {
       let obs$ = this.input.map(r => this.security.hasRole(r));
       return merge(...obs$).pipe(
         first(r => r, false)
-      );
-    }
-
-    return of(false);
-  }
-}
-
-
-
-@Directive({ selector: '[secuHasNotRoles]' })
-export class HasNotRolesDirective extends BaseSecurityDirective {
-  @Input('secuHasNotRoles') input: string | string[];
-
-  @Input('secuHasNotRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
-    this.elseTemplateRef = elseBlock;
-  }
-
-  hasPermission(): Observable<boolean> {
-    if (Array.isArray(this.input)) {
-      let obs$ = this.input.map(r => this.security.hasRole(r));
-      return merge(...obs$).pipe(
-        every(r => !r)
-      );
-    }
-    else if (this.input) {
-      return this.security.hasRole(this.input).pipe(
-        map(r => !r)
       );
     }
 
@@ -153,20 +153,25 @@ export class IsMemberOfDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission(): Observable<boolean> {
-    if (Array.isArray(this.input)) {
-      let obs$ = this.input.map(r => this.security.hasRole(r));
-      return merge(...obs$).pipe(
-        every(r => r)
-      );
-    }
-    else if (this.input) {
-      return this.security.isMemberOf(this.input);
-    }
-
-    return of(false);
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.isMemberOf(n)), this.input, true);
   }
 }
+
+
+@Directive({ selector: '[secuIsNotMemberOf]' })
+export class IsNotMemberOfDirective extends BaseSecurityDirective {
+  @Input('secuIsNotMemberOf') input: string | string[];
+
+  @Input('secuIsNotMemberOfElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.isMemberOf(n)), this.input, false);
+  }
+}
+
 
 
 
@@ -178,17 +183,21 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
-  hasPermission(): Observable<boolean> {
-    if (Array.isArray(this.input)) {
-      let obs$ = this.input.map(r => this.security.hasPermission(r));
-      return merge(...obs$).pipe(
-        every(r => r)
-      );
-    }
-    else if (this.input) {
-      return this.security.hasPermission(this.input);
-    }
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.hasPermission(n)), this.input, true);
+  }
+}
 
-    return of(false);
+
+@Directive({ selector: '[secuHasNotPermissions]' })
+export class HasNotPermissionsDirective extends BaseSecurityDirective {
+  @Input('secuHasNotPermissions') input: string | string[];
+
+  @Input('secuHasNotPermissionsElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  isAuthorized(): Observable<boolean> {
+    return this.testEvery((n => this.security.hasPermission(n)), this.input, true);
   }
 }
