@@ -3,5 +3,6 @@
  */
 
 export * from './lib/ngx-security.service';
+export * from './lib/ngx-security.guard';
 export * from './lib/ngx-security.directive';
 export * from './lib/ngx-security.module';

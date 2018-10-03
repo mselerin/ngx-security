@@ -74,7 +74,7 @@ export class NgxSecurityService
 
 
 
-  private updateState(partialState: any): void {
+  private updateState(partialState: Partial<NgxSecurityState>): void {
     if (!this.securityState)
       this.securityState = { ...this.INITIAL_STATE };
 
