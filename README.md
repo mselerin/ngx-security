@@ -149,11 +149,13 @@ export const ROUTES: Routes = [
     path: 'secured-page',
     canActivate: [ NgxSecurityGuard ],
     data: {
-      authenticated: true,
-      roles: ['ADMIN'],
-      redirectTo: '/access-denied',
-      unauthorizedHandler: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => {
-        console.warn('No, no, no, you cannot access this !');
+      security: {
+        authenticated: true,
+        roles: ['ADMIN'],
+        redirectTo: '/access-denied',
+        unauthorizedHandler: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => {
+          console.warn('No, no, no, you cannot access this !');
+        }
       }
     },
     component: SecuredComponent
