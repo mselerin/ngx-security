@@ -1,34 +1,27 @@
 import { NgModule } from '@angular/core';
-import {
-  BaseAuthenticatedDirective,
-  BaseSecurityDirective,
-  IsAuthenticatedDirective,
-  IsAnonymousDirective,
-  HasRoleDirective,
-  HasNotRoleDirective,
-  HasRolesDirective,
-  HasAnyRolesDirective
-} from './ngx-security.directive';
+import * as Security from './ngx-security.directive';
 
 @NgModule({
   imports: [],
   declarations: [
-    BaseAuthenticatedDirective,
-    BaseSecurityDirective,
-    IsAuthenticatedDirective,
-    IsAnonymousDirective,
-    HasRoleDirective,
-    HasNotRoleDirective,
-    HasRolesDirective,
-    HasAnyRolesDirective
+    Security.BaseAuthenticatedDirective,
+    Security.BaseSecurityDirective,
+    Security.IsAuthenticatedDirective,
+    Security.IsAnonymousDirective,
+    Security.HasRoleDirective,
+    Security.HasNotRoleDirective,
+    Security.HasRolesDirective,
+    Security.HasAnyRolesDirective,
+    Security.IsMemberOfDirective
   ],
   exports: [
-    IsAuthenticatedDirective,
-    IsAnonymousDirective,
-    HasRoleDirective,
-    HasNotRoleDirective,
-    HasRolesDirective,
-    HasAnyRolesDirective
+    Security.IsAuthenticatedDirective,
+    Security.IsAnonymousDirective,
+    Security.HasRoleDirective,
+    Security.HasNotRoleDirective,
+    Security.HasRolesDirective,
+    Security.HasAnyRolesDirective,
+    Security.IsMemberOfDirective
   ]
 })
 export class NgxSecurityModule { }

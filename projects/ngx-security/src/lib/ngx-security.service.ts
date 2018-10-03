@@ -1,24 +1,24 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { NgxSecurityState } from './ngx-security.model';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityService
 {
-  private permissionsSource: BehaviorSubject<any>;
-  public permissions$: Observable<any>;
+  private stateSource: BehaviorSubject<NgxSecurityState>;
+  public state$: Observable<NgxSecurityState>;
 
-  private readonly INITIAL_STATE: any = {
+  private readonly INITIAL_STATE: NgxSecurityState = {
     authenticated: false,
-    roles: []
+    roles: [],
+    groups: []
   };
 
-  private permissionsState: any;
+  private securityState: NgxSecurityState;
 
   constructor() {
-    this.permissionsSource = new BehaviorSubject<void>(null);
-    this.permissions$ = this.permissionsSource.asObservable();
-    
-    this.permissionsState = this.INITIAL_STATE;
+    this.stateSource = new BehaviorSubject<NgxSecurityState>(null);
+    this.state$ = this.stateSource.asObservable();
     this.reset();
   }
 
@@ -26,42 +26,63 @@ export class NgxSecurityService
     this.updateState(this.INITIAL_STATE);
   }
 
+
+
   public setAuthenticated(value: boolean): void {
     this.updateState({ authenticated: value });
   }
 
+  public isAuthenticated(): boolean {
+    return this.securityState.authenticated;
+  }
+
+
+
   public addRole(role: string): void {
-    this.updateState({
-      roles: [...this.permissionsState.roles, role]
-    });
+    this.updateState({ roles: [...this.securityState.roles, role] });
   }
 
   public setRoles(roles: string[]): void {
-    this.updateState({
-      roles: roles || []
-    });
+    this.updateState({ roles: roles || [] });
   }
 
-  public clearRole(): void {
+  public clearRoles(): void {
     this.setRoles([]);
   }
 
-
-  public isAuthenticated(): boolean {
-    return this.permissionsState.authenticated;
-  }
-
   public hasRole(role: string): boolean {
-    return this.permissionsState.roles.some((r: string) => r.toUpperCase() === role);
+    return this.securityState.roles.some((r: string) => r.toUpperCase() === role);
   }
+
+
+
+  public addGroup(group: string): void {
+    this.updateState({ groups: [...this.securityState.groups, group] });
+  }
+
+  public setGroups(groups: string[]): void {
+    this.updateState({ groups: groups || [] });
+  }
+
+  public clearGroups(): void {
+    this.setGroups([]);
+  }
+
+  public isMemberOf(group: string): boolean {
+    return this.securityState.groups.some((g: string) => g.toUpperCase() === group);
+  }
+
 
 
   private updateState(partialState: any): void {
-    this.permissionsState = { ...this.permissionsState, ...partialState };
-    this.permissionsChanged();
+    if (!this.securityState)
+      this.securityState = { ...this.INITIAL_STATE };
+
+    this.securityState = { ...this.securityState, ...partialState };
+    this.stateChanged();
   }
 
-  public permissionsChanged(): void {
-    this.permissionsSource.next(this.permissionsState);
+  public stateChanged(): void {
+    this.stateSource.next(this.securityState);
   }
 }
