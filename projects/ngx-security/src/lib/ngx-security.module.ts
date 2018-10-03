@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import * as Security from './ngx-security.directive';
+import * as Security from './directives/ngx-security.directive';
 
 @NgModule({
   imports: [],

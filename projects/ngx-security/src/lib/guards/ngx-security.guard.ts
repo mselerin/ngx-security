@@ -7,8 +7,8 @@ import {
   Route, Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { NgxSecurityService } from './ngx-security.service';
-import { NgxSecurityGuardOptions } from './ngx-security.model';
+import { NgxSecurityService } from '../services/ngx-security.service';
+import { NgxSecurityGuardOptions } from '../models/ngx-security.model';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild

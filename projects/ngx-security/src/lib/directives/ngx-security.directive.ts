@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { Directive, OnInit, OnDestroy, Input, TemplateRef, ViewContainerRef } from '@angular/core';
-import { NgxSecurityService } from './ngx-security.service';
+import { NgxSecurityService } from '../services/ngx-security.service';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {

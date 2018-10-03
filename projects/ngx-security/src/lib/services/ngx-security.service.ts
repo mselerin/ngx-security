@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { NgxSecurityState } from './ngx-security.model';
+import { NgxSecurityState } from '../models/ngx-security.model';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityService

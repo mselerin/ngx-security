@@ -1,6 +1,6 @@
 import { IsAuthenticatedDirective } from './ngx-security.directive';
 import { TestBed } from '@angular/core/testing';
-import { NgxSecurityService } from './ngx-security.service';
+import { NgxSecurityService } from '../services/ngx-security.service';
 
 describe('NgxSecurityDirective', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
