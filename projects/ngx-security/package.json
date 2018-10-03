@@ -10,7 +10,6 @@
     "email": "michel.selerin@outlook.com"
   },
   "license": "MIT",
-  "private": true,
   "peerDependencies": {
     "@angular/common": "^6.0.0",
     "@angular/core": "^6.0.0"
