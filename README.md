@@ -6,4 +6,4 @@
 
 
 ## Changelog
-Changelog is available [here](./projects/ngx-security/CHANGELOG.md).
+Changelog is available [here](https://github.com/mselerin/ngx-security/blob/master/projects/ngx-security/CHANGELOG.md).
