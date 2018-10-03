@@ -75,7 +75,9 @@ export class SampleComponent
 
 > Of course, you can change the security state wherever you want !
 
-You can now use the differents directives.
+You can now use the differents directives and the guard.
+
+### Directives
 
 #### IsAuthenticated
 ```html
@@ -127,6 +129,36 @@ You can now use the differents directives.
 <ng-template #groupElse>
   <div>I am not a member of those groups</div>
 </ng-template>
+```
+
+
+### Route Guard
+The `NgxSecurityGuard` can prevent an unauthorized user to load / access parts of your application.
+
+```typescript
+import {
+  ActivatedRouteSnapshot,
+  Route, Routes,
+  RouterStateSnapshot
+} from '@angular/router';
+
+import { NgxSecurityGuard } from 'ngx-security';
+
+export const ROUTES: Routes = [
+  {
+    path: 'secured-page',
+    canActivate: [ NgxSecurityGuard ],
+    data: {
+      authenticated: true,
+      roles: ['ADMIN'],
+      redirectTo: '/access-denied',
+      unauthorizedHandler: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => {
+        console.warn('No, no, no, you cannot access this !');
+      }
+    },
+    component: SecuredComponent
+  }
+];
 ```
 
 
