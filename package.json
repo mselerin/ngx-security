@@ -23,7 +23,7 @@
     "test:lib": "jest --config ./jest.lib.config.js",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "release": "lerna version --no-push",
+    "release": "npm run test:lib && lerna version --no-push",
     "copy:docs": "cpx {LICENSE,README.md} dist/ngx-security",
     "publish:lib": "npm run build:lib && cd dist/ngx-security && npm publish"
   },
