@@ -25,7 +25,7 @@
     "e2e": "ng e2e",
     "release": "lerna version --no-push",
     "copy:docs": "cpx {LICENSE,README.md} dist/ngx-security",
-    "publish:lib": "npm run build:lib && cd dist/ngx-security"
+    "publish:lib": "npm run build:lib && cd dist/ngx-security && npm publish"
   },
   "dependencies": {
     "@angular/animations": "^6.1.0",
