@@ -43,6 +43,11 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
       if (guardOptions.redirectTo)
         this.router.navigateByUrl(guardOptions.redirectTo);
     }
+    else {
+      if (guardOptions.authorizedHandler) {
+        guardOptions.authorizedHandler(route, state);
+      }
+    }
 
     return access;
   }

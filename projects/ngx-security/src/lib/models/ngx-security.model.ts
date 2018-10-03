@@ -12,5 +12,6 @@ export interface NgxSecurityGuardOptions {
   roles?: string[];
   groups?: string[];
   redirectTo?: string;
+  authorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;
   unauthorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;
 }
