@@ -5,5 +5,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 <a name="0.0.1"></a>
 ## 0.0.1 (2018-10-03)
+> Initial release
 
 **Note:** Version bump only for package ngx-security
