@@ -7,20 +7,18 @@ import * as Security from './directives/ngx-security.directive';
     Security.BaseSecurityDirective,
     Security.IsAuthenticatedDirective,
     Security.IsAnonymousDirective,
-    Security.HasRoleDirective,
-    Security.HasNotRoleDirective,
     Security.HasRolesDirective,
     Security.HasAnyRolesDirective,
+    Security.HasNotRolesDirective,
     Security.IsMemberOfDirective,
     Security.HasPermissionsDirective
   ],
   exports: [
     Security.IsAuthenticatedDirective,
     Security.IsAnonymousDirective,
-    Security.HasRoleDirective,
-    Security.HasNotRoleDirective,
     Security.HasRolesDirective,
     Security.HasAnyRolesDirective,
+    Security.HasNotRolesDirective,
     Security.IsMemberOfDirective,
     Security.HasPermissionsDirective
   ]

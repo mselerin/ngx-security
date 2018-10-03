@@ -73,37 +73,6 @@ export class IsAnonymousDirective extends IsAuthenticatedDirective {
 
 
 
-@Directive({ selector: '[secuHasRole]' })
-export class HasRoleDirective extends BaseSecurityDirective {
-  @Input('secuHasRole') input: string;
-
-  @Input('secuHasRoleElse') set elseBlock(elseBlock: TemplateRef<any>) {
-    this.elseTemplateRef = elseBlock;
-  }
-
-  hasPermission(): Observable<boolean> {
-    return this.security.hasRole(this.input);
-  }
-}
-
-
-
-@Directive({ selector: '[secuHasNotRole]' })
-export class HasNotRoleDirective extends BaseSecurityDirective {
-  @Input('secuHasNotRole') input: string;
-
-  @Input('secuHasNotRoleElse') set elseBlock(elseBlock: TemplateRef<any>) {
-    this.elseTemplateRef = elseBlock;
-  }
-
-  hasPermission(): Observable<boolean> {
-    return this.security.hasRole(this.input).pipe(
-      map(hasPerm => !hasPerm)
-    );
-  }
-}
-
-
 
 
 @Directive({ selector: '[secuHasRoles]' })
@@ -127,7 +96,6 @@ export class HasRolesDirective extends BaseSecurityDirective {
 }
 
 
-
 @Directive({ selector: '[secuHasAnyRoles]' })
 export class HasAnyRolesDirective extends BaseSecurityDirective {
   @Input('secuHasAnyRoles') input: string[];
@@ -141,6 +109,33 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
       let obs$ = this.input.map(r => this.security.hasRole(r));
       return merge(...obs$).pipe(
         first(r => r, false)
+      );
+    }
+
+    return of(false);
+  }
+}
+
+
+
+@Directive({ selector: '[secuHasNotRoles]' })
+export class HasNotRolesDirective extends BaseSecurityDirective {
+  @Input('secuHasNotRoles') input: string | string[];
+
+  @Input('secuHasNotRolesElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  hasPermission(): Observable<boolean> {
+    if (Array.isArray(this.input)) {
+      let obs$ = this.input.map(r => this.security.hasRole(r));
+      return merge(...obs$).pipe(
+        every(r => !r)
+      );
+    }
+    else if (this.input) {
+      return this.security.hasRole(this.input).pipe(
+        map(r => !r)
       );
     }
 
