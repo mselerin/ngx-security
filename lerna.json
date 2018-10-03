@@ -1,0 +1,11 @@
+{
+  "version": "independent",
+  "packages": [
+    "projects/*"
+  ],
+  "command": {
+    "publish": {
+      "conventionalCommits": true
+    }
+  }
+}

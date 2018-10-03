@@ -1,0 +1,19 @@
+<h1>
+  ngx-security demo
+</h1>
+
+<div>
+  <button (click)="switchAuthentication()">Switch auth</button>
+</div>
+
+<div>
+  <b>Authenticated ?</b>&nbsp;
+  <span *secuIsAuthenticated>YES</span>
+  <span *secuIsAnonymous>NO</span>
+</div>
+
+<div>
+  <b>HasRole('ADMIN') ?</b>&nbsp;
+  <span *secuHasRole="'ADMIN'">YES</span>
+  <span *secuHasNotRole="'ADMIN'">NO</span>
+</div>
