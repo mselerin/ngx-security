@@ -14,7 +14,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm run build:lib",
+    "build": "npm run build:lib && npm copy:docs",
     "test": "npm run test:lib && npm run build:lib && npm run test:app",
     "build:app": "ng build --prod",
     "build:lib": "ng build ngx-security",
@@ -22,7 +22,8 @@
     "test:lib": "jest --config ./jest.lib.config.js",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "release": "lerna version --no-push"
+    "release": "lerna version --no-push",
+    "copy:docs": "cpx {LICENSE,README.md} dist/ngx-security"
   },
   "dependencies": {
     "@angular/animations": "^6.1.0",
@@ -48,6 +49,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
     "codelyzer": "~4.3.0",
+    "cpx": "^1.5.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
     "jest": "^23.6.0",
