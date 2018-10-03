@@ -5,26 +5,37 @@ import * as Security from './directives/ngx-security.directive';
   imports: [],
   declarations: [
     Security.BaseSecurityDirective,
+
     Security.IsAuthenticatedDirective,
     Security.IsAnonymousDirective,
+
     Security.HasRolesDirective,
-    Security.HasAnyRolesDirective,
     Security.HasNotRolesDirective,
+    Security.HasAnyRolesDirective,
+
     Security.IsMemberOfDirective,
     Security.IsNotMemberOfDirective,
+    Security.IsMemberOfAnyDirective,
+
     Security.HasPermissionsDirective,
-    Security.HasNotPermissionsDirective
+    Security.HasNotPermissionsDirective,
+    Security.HasAnyPermissionsDirective
   ],
   exports: [
     Security.IsAuthenticatedDirective,
     Security.IsAnonymousDirective,
+
     Security.HasRolesDirective,
-    Security.HasAnyRolesDirective,
     Security.HasNotRolesDirective,
+    Security.HasAnyRolesDirective,
+
     Security.IsMemberOfDirective,
     Security.IsNotMemberOfDirective,
+    Security.IsMemberOfAnyDirective,
+
     Security.HasPermissionsDirective,
-    Security.HasNotPermissionsDirective
+    Security.HasNotPermissionsDirective,
+    Security.HasAnyPermissionsDirective
   ]
 })
 export class NgxSecurityModule { }

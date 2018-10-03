@@ -53,7 +53,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   }
 
 
-  protected testEvery(fn: (name: string) => Observable<boolean>, input: string | string[], expected: boolean): Observable<boolean> {
+  protected testEvery(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
     let obs$: Observable<boolean>[] = [];
     if (Array.isArray(input)) {
       obs$.push(...input.map(r => fn(r)));
@@ -67,6 +67,23 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 
     return merge(...obs$).pipe(
       every(r => r === expected)
+    );
+  }
+
+  protected testFirst(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      first(r => r === expected, false)
     );
   }
 }
@@ -104,7 +121,7 @@ export class HasRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.hasRole(n)), this.input, true);
+    return this.testEvery(this.input, (n => this.security.hasRole(n)), true);
   }
 }
 
@@ -118,7 +135,7 @@ export class HasNotRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.hasRole(n)), this.input, false);
+    return this.testEvery(this.input, (n => this.security.hasRole(n)), false);
   }
 }
 
@@ -132,14 +149,7 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    if (this.input) {
-      let obs$ = this.input.map(r => this.security.hasRole(r));
-      return merge(...obs$).pipe(
-        first(r => r, false)
-      );
-    }
-
-    return of(false);
+    return this.testFirst(this.input, (n => this.security.hasPermission(n)), true);
   }
 }
 
@@ -154,7 +164,7 @@ export class IsMemberOfDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.isMemberOf(n)), this.input, true);
+    return this.testEvery(this.input, (n => this.security.isMemberOf(n)), true);
   }
 }
 
@@ -168,7 +178,21 @@ export class IsNotMemberOfDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.isMemberOf(n)), this.input, false);
+    return this.testEvery(this.input, (n => this.security.isMemberOf(n)), false);
+  }
+}
+
+
+@Directive({ selector: '[secuIsMemberOfAny]' })
+export class IsMemberOfAnyDirective extends BaseSecurityDirective {
+  @Input('secuIsMemberOfAny') input: string[];
+
+  @Input('secuIsMemberOfAnyElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  isAuthorized(): Observable<boolean> {
+    return this.testFirst(this.input, (n => this.security.isMemberOf(n)), true);
   }
 }
 
@@ -184,7 +208,7 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.hasPermission(n)), this.input, true);
+    return this.testEvery(this.input, (n => this.security.hasPermission(n)), true);
   }
 }
 
@@ -198,6 +222,20 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery((n => this.security.hasPermission(n)), this.input, true);
+    return this.testEvery(this.input, (n => this.security.hasPermission(n)), false);
+  }
+}
+
+
+@Directive({ selector: '[secuHasAnyPermissions]' })
+export class HasAnyPermissionsDirective extends BaseSecurityDirective {
+  @Input('secuHasAnyPermissions') input: string | string[];
+
+  @Input('secuHasAnyPermissionsElse') set elseBlock(elseBlock: TemplateRef<any>) {
+    this.elseTemplateRef = elseBlock;
+  }
+
+  isAuthorized(): Observable<boolean> {
+    return this.testFirst(this.input, (n => this.security.hasPermission(n)), true);
   }
 }
