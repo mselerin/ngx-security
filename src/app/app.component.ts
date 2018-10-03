@@ -11,7 +11,7 @@ export class AppComponent implements OnInit
   title = 'ngx-security-app';
 
   constructor(
-    private perm: NgxSecurityService
+    private security: NgxSecurityService
   ) {}
 
   ngOnInit() {
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit
   }
 
   switchAuthentication() {
-    this.perm.setAuthenticated(!this.perm.isAuthenticated());
-    this.perm.setRoles(['ADMIN', 'USER']);
+    this.security.setAuthenticated(!this.security.isAuthenticated());
+    this.security.setRoles(['ADMIN', 'USER']);
   }
 }
