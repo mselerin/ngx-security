@@ -53,15 +53,21 @@ import { NgxSecurityService } from 'ngx-security';
   selector: 'app-sample',
   templateUrl: './sample.component.html'
 })
-export class SampleComponent implements OnInit
+export class SampleComponent
 {
   constructor(
     private security: NgxSecurityService
   ) {}
 
-  ngOnInit() {
+  login() {
     this.security.setAuthenticated(true);
     this.security.setRoles(['ADMIN', 'USER']);
+    this.security.addRole('EDITOR');
+  }
+  
+  logout() {
+    // Reset the security state to it's initial value
+    this.security.reset();
   }
 }
 ```
