@@ -186,4 +186,4 @@ Feel free to introduce a feature request, an issue or a pull request. :ok_hand:
 Changelog is available [here](https://github.com/mselerin/ngx-security/blob/master/projects/ngx-security/CHANGELOG.md).
 
 ## License
-MIT © [Michel Selerin](https://github.com/mselerin)
+MIT
