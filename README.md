@@ -160,6 +160,23 @@ export const ROUTES: Routes = [
 ```
 
 
+## Tips
+
+### Log unauthorized access
+
+You can use the `unauthorizedHandler` to log unauthorized access to route path :
+
+```typescript
+unauthorizedHandler: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => {
+  let path = (state ? state.url : null);
+    if (!path && route) {
+      path = '/' + (route as Route).path;
+    }
+  
+    console.warn('Unauthorized access', path);
+}
+```
+
 
 ## Contributing
 Feel free to introduce a feature request, an issue or a pull request. :ok_hand:
