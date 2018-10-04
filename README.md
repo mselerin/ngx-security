@@ -48,6 +48,7 @@ You need to set/change this state to use the directives:
 
 ```typescript
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NgxSecurityService } from 'ngx-security';
 
 @Component({
@@ -57,14 +58,23 @@ import { NgxSecurityService } from 'ngx-security';
 export class SampleComponent
 {
   constructor(
+    private http: HttpClient,
     private security: NgxSecurityService
   ) {}
 
   login() {
+    // Value directly setted
     this.security.setAuthenticated(true);
     this.security.setRoles(['ADMIN', 'USER']);
     this.security.addRole('EDITOR');
     this.security.setGroups(['GROUP_A', 'GROUP_B']);
+    
+    // Checker function for more complex case
+    this.security.setPermissionChecker((perm: string) => {
+      return this.http.get(`/api/auth/permissions/has/${perm}`).pipe(
+        map(() => true)
+      );
+    });
   }
   
   logout() {
@@ -74,7 +84,7 @@ export class SampleComponent
 }
 ```
 
-> Of course, you can change the security state wherever you want !
+> Of course, you can change the security state wherever and whenever you want !
 
 You can now use the differents directives and the guard.
 
@@ -90,17 +100,10 @@ You can now use the differents directives and the guard.
 <div *secuIsAnonymous>I'm an anonymous user (not authenticated)</div>
 ```
 
-#### HasRole
-```html
-<div *secuHasRole="'ADMIN'; else roleElse">I have the role 'ADMIN'</div>
-<ng-template #roleElse>
-  <div>I don't have the role 'ADMIN'</div>
-</ng-template>
-```
 
-
-#### HasRoles
+#### HasRoles / HasPermissions / IsMemberOf
 ```html
+<div *secuHasRoles="'ADMIN'">I have the role 'ADMIN'</div>
 <div *secuHasRoles="['CREATOR', 'EDITOR']; else roleElse">I have the role 'CREATOR' and 'EDITOR'</div>
 <ng-template #roleElse>
   <div>I don't have the roles</div>
@@ -108,7 +111,7 @@ You can now use the differents directives and the guard.
 ```
 
 
-#### HasAnyRoles
+#### HasAnyRoles / HasAnyPermissions / IsMemberOfAny
 ```html
 <div *secuHasAnyRoles="['CREATOR', 'EDITOR']; else roleElse">I have the role 'CREATOR' or 'EDITOR'</div>
 <ng-template #roleElse>
@@ -117,20 +120,12 @@ You can now use the differents directives and the guard.
 ```
 
 
-#### HasNotRole
+#### HasNotRoles / HasNotPermissions / IsNotMemberOf
 ```html
-<div *secuHasNotRole="'POWERUSER'">I don't have the role 'POWERUSER'</div>
+<div *secuHasNotRoles="'POWERUSER'">I don't have the role 'POWERUSER'</div>
 ```
 
 
-#### IsMemberOf
-```html
-<div *secuIsMemberOf="'GROUP_A'">I am a member of 'GROUP_A'</div>
-<div *secuIsMemberOf="['GROUP_A', 'GROUP_B']; else groupElse">I am a member of 'GROUP_A' and 'GROUP_B'</div>
-<ng-template #groupElse>
-  <div>I am not a member of those groups</div>
-</ng-template>
-```
 
 
 ### Route Guard
@@ -163,6 +158,7 @@ export const ROUTES: Routes = [
   }
 ];
 ```
+
 
 
 ## Contributing
