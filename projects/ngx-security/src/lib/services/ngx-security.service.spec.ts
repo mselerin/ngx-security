@@ -18,10 +18,13 @@ describe('NgxSecurityService', () => {
 
 
   it('should be false after reset', fakeAsync(() => {
-    security.setAuthenticatedChecker(() => of(true));
-    security.setRolesChecker(() => of(true));
-    security.setGroupsChecker(() => of(true));
-    security.setPermissionChecker(() => of(true));
+    security.setAuthenticatedChecker(() => true);
+    security.setRolesChecker(() => true);
+    security.setGroupsChecker(() => true);
+    security.setPermissionChecker(() => true);
+
+    security.isAuthenticated().subscribe(d => expect(d).toBeTruthy());
+    tick();
 
     security.reset();
 

@@ -1,6 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { NgxSecurityState } from '../models/ngx-security.model';
+import { CheckerResult, NgxSecurityState } from '../models/ngx-security.model';
+
+
+export function asObservable(obs: CheckerResult): Observable<boolean> {
+  if (obs instanceof Observable)
+    return obs;
+
+  return of(obs);
+}
+
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityService
@@ -34,7 +43,7 @@ export class NgxSecurityService
   }
 
 
-  public setAuthenticatedChecker(fn: () => Observable<boolean>): void {
+  public setAuthenticatedChecker(fn: () => CheckerResult): void {
     this.updateState({ authenticationChecker: fn });
   }
 
@@ -50,7 +59,7 @@ export class NgxSecurityService
 
     // Check with callback
     if (this.securityState.authenticationChecker)
-      return this.securityState.authenticationChecker();
+      return asObservable(this.securityState.authenticationChecker());
 
     // Default
     return of(false);
@@ -58,7 +67,7 @@ export class NgxSecurityService
 
 
 
-  public setRolesChecker(fn: (name: string) => Observable<boolean>): void {
+  public setRolesChecker(fn: (name: string) => CheckerResult): void {
     this.updateState({ rolesChecker: fn });
   }
 
@@ -82,7 +91,7 @@ export class NgxSecurityService
 
     // Check with callback
     if (this.securityState.rolesChecker)
-      return this.securityState.rolesChecker(role);
+      return asObservable(this.securityState.rolesChecker(role));
 
     // Default
     return of(false);
@@ -91,7 +100,7 @@ export class NgxSecurityService
 
 
 
-  public setGroupsChecker(fn: (name: string) => Observable<boolean>): void {
+  public setGroupsChecker(fn: (name: string) => CheckerResult): void {
     this.updateState({ groupsChecker: fn });
   }
 
@@ -115,7 +124,7 @@ export class NgxSecurityService
 
     // Check with callback
     if (this.securityState.groupsChecker)
-      return this.securityState.groupsChecker(group);
+      return asObservable(this.securityState.groupsChecker(group));
 
     // Default
     return of(false);
@@ -124,7 +133,7 @@ export class NgxSecurityService
 
 
 
-  public setPermissionChecker(fn: (name: string) => Observable<boolean>): void {
+  public setPermissionChecker(fn: (name: string) => CheckerResult): void {
     this.updateState({ permissionsChecker: fn });
   }
 
@@ -148,7 +157,7 @@ export class NgxSecurityService
 
     // Check with callback
     if (this.securityState.permissionsChecker)
-      return this.securityState.permissionsChecker(name);
+      return asObservable(this.securityState.permissionsChecker(name));
 
     // Default
     return of(false);
