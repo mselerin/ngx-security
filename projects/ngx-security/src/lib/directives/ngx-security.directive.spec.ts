@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { NgxSecurityService } from '../services/ngx-security.service';
 import { Component } from '@angular/core';
 import { NgxSecurityModule } from '../ngx-security.module';
@@ -8,6 +8,7 @@ import { NgxSecurityModule } from '../ngx-security.module';
   template: `<div>TEST</div>`
 })
 export class TestSecuredComponent {}
+
 
 
 function createTestComponent(template: string): ComponentFixture<TestSecuredComponent>
