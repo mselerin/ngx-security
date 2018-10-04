@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/mselerin/ngx-security/compare/ngx-security@1.0.0...ngx-security@2.0.0) (2018-10-04)
+
+
+### Features
+
+* add directives 'IsMemberOfAny' and 'HasAnyPermissions' ([169aaa4](https://github.com/mselerin/ngx-security/commit/169aaa4))
+* add directives 'IsNotMemberOf' and 'HasNotPermissions' ([3363923](https://github.com/mselerin/ngx-security/commit/3363923))
+* adding unit test ([197f34e](https://github.com/mselerin/ngx-security/commit/197f34e))
+* removing singular hasRole/hasNotRole directive ([7b36ca3](https://github.com/mselerin/ngx-security/commit/7b36ca3))
+* removing warning when no access ([e31f9aa](https://github.com/mselerin/ngx-security/commit/e31f9aa))
+* security check with Observable<boolean> ([0772cb7](https://github.com/mselerin/ngx-security/commit/0772cb7))
+
+
+### BREAKING CHANGES
+
+* removing singular hasRole/hasNotRole directive
+* all security check return `Observable<boolean>`
+
+
+
+
+
 <a name="1.0.0"></a>
 # [1.0.0](https://github.com/mselerin/ngx-security/compare/ngx-security@0.3.0...ngx-security@1.0.0) (2018-10-03)
 
