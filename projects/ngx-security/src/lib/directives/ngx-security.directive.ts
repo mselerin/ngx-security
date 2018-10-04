@@ -149,7 +149,7 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testFirst(this.input, (n => this.security.hasPermission(n)), true);
+    return this.testFirst(this.input, (n => this.security.hasRole(n)), true);
   }
 }
 
