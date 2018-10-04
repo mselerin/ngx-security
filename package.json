@@ -20,12 +20,13 @@
     "build:lib": "ng build ngx-security && npm run copy:docs",
     "watch:lib": "ng build ngx-security --watch",
     "test:app": "jest --config ./jest.app.config.js",
-    "test:lib": "jest --config ./jest.lib.config.js",
+    "test:lib": "jest --config ./jest.lib.config.js --coverage",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "release": "npm run test:lib && lerna version --no-push",
     "copy:docs": "cpx {LICENSE,README.md} dist/ngx-security",
-    "publish:lib": "npm run build:lib && cd dist/ngx-security && npm publish"
+    "publish:lib": "npm run build:lib && cd dist/ngx-security && npm publish",
+    "codecov": "cat coverage/lcovonly/lcov.info | codecov"
   },
   "dependencies": {
     "@angular/animations": "^6.1.0",
@@ -50,6 +51,7 @@
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "codecov": "^3.1.0",
     "codelyzer": "~4.3.0",
     "cpx": "^1.5.0",
     "jasmine-core": "~2.99.1",

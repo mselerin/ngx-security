@@ -1,12 +1,12 @@
 language: node_js
 node_js:
-  - "10"
   - "9"
 
 scripts:
-  - npm install codecov -g
+  - npm run test:lib
+
 after_success:
-  - codecov
+  - npm run codecov
 
 notifications:
   email:
