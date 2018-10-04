@@ -1,16 +1,18 @@
 import { ActivatedRouteSnapshot, Route, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 
+export type CheckerResult = Observable<boolean> | boolean;
+
 export interface NgxSecurityState {
   authenticated: boolean;
   roles: string[];
   groups: string[];
   permissions: string[];
 
-  authenticationChecker: () => Observable<boolean>;
-  rolesChecker: (name: string) => Observable<boolean>;
-  groupsChecker: (name: string) => Observable<boolean>;
-  permissionsChecker: (name: string) => Observable<boolean>;
+  authenticationChecker: () => CheckerResult;
+  rolesChecker: (name: string) => CheckerResult;
+  groupsChecker: (name: string) => CheckerResult;
+  permissionsChecker: (name: string) => CheckerResult;
 }
 
 
