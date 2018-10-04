@@ -32,13 +32,6 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
     return this.checkAccess(guardOptions).pipe(
       tap(access => {
         if (!access) {
-          let path = (state ? state.url : null);
-          if (!path && route) {
-            path = '/' + (route as Route).path;
-          }
-
-          console.warn('Unauthorized access', path);
-
           if (guardOptions.unauthorizedHandler) {
             guardOptions.unauthorizedHandler(route, state);
           }
