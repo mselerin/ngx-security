@@ -47,7 +47,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-
+  /* istanbul ignore next */
   protected isAuthorized(): Observable<boolean> {
     return of(false);
   }

@@ -11,18 +11,17 @@ export class TestSecuredComponent {}
 
 
 
-function createTestComponent(template: string): ComponentFixture<TestSecuredComponent>
-{
-  return TestBed
-    .overrideComponent(TestSecuredComponent, {set: {template: template}} )
-    .createComponent(TestSecuredComponent);
-}
-
-
 describe('NgxSecurityDirectives', () => {
   let security;
   let fixture;
   let element;
+
+
+  const createTestComponent = (template: string): ComponentFixture<TestSecuredComponent> => {
+    return TestBed
+      .overrideComponent(TestSecuredComponent, {set: {template: template}} )
+      .createComponent(TestSecuredComponent);
+  };
 
   const instantiateTest = (directive: string) => {
     fixture = createTestComponent(`<div id="OK" ${directive}>OK</div><ng-template #elseTpl><div id="ELSE">ELSE</div></ng-template>`);
@@ -133,11 +132,11 @@ describe('NgxSecurityDirectives', () => {
 
   describe('secuHasRoles with else template', () => {
     beforeEach(() => {
-      instantiateTest(`*secuHasRoles="['X', 'Y', 'Z']; else elseTpl"`);
+      instantiateTest(`*secuHasRoles="'X'; else elseTpl"`);
     });
 
     it('should show/hide the elseTpl', fakeAsync(() => {
-      security.setRoles(['X']);
+      security.setRoles(['A']);
       fixture.detectChanges();
       expectHidden('OK');
       expectVisible('ELSE');
@@ -171,6 +170,25 @@ describe('NgxSecurityDirectives', () => {
   });
 
 
+  describe('secuHasNotRoles with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasNotRoles="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setRoles(['X']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setRoles(['A', 'B', 'C']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
 
   describe('secuHasAnyRoles', () => {
     beforeEach(() => {
@@ -190,6 +208,27 @@ describe('NgxSecurityDirectives', () => {
       expectVisible('OK');
     }));
   });
+
+
+  describe('secuHasAnyRoles with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasAnyRoles="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setRoles(['A']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setRoles(['X']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
 
 
 
@@ -216,6 +255,25 @@ describe('NgxSecurityDirectives', () => {
   });
 
 
+  describe('secuIsMemberOf with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuIsMemberOf="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setGroups(['A']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setGroups(['X']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
 
   describe('secuIsNotMemberOf', () => {
     beforeEach(() => {
@@ -233,6 +291,25 @@ describe('NgxSecurityDirectives', () => {
       security.setGroups(['A', 'B', 'C']);
       fixture.detectChanges();
       expectVisible('OK');
+    }));
+  });
+
+
+  describe('secuIsNotMemberOf with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuIsNotMemberOf="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setGroups(['X']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setGroups(['A']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
     }));
   });
 
@@ -258,11 +335,30 @@ describe('NgxSecurityDirectives', () => {
   });
 
 
+  describe('secuIsMemberOfAny with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuIsMemberOfAny="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setGroups(['A']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setGroups(['X']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
 
 
   describe('secuHasPermissions', () => {
     beforeEach(() => {
-      instantiateTest(`*secuHasPermissions="['X', 'Y', 'Z']"`);
+      instantiateTest(`*secuHasPermissions="['X', 'Y', 'Z']; else elseTpl"`);
     });
 
     it('should not show the element if has not permissions', fakeAsync(() => {
@@ -276,6 +372,25 @@ describe('NgxSecurityDirectives', () => {
       security.setPermissions(['X', 'Y', 'Z']);
       fixture.detectChanges();
       expectVisible('OK');
+    }));
+  });
+
+
+  describe('secuHasPermissions with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasPermissions="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setPermissions(['A']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setPermissions(['X']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
     }));
   });
 
@@ -301,6 +416,25 @@ describe('NgxSecurityDirectives', () => {
   });
 
 
+  describe('secuHasNotPermissions with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasNotPermissions="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setPermissions(['X']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setPermissions(['A']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
 
   describe('secuHasAnyPermissions', () => {
     beforeEach(() => {
@@ -320,5 +454,52 @@ describe('NgxSecurityDirectives', () => {
       expectVisible('OK');
     }));
   });
+
+
+  describe('secuHasAnyPermissions with else template', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasAnyPermissions="'X'; else elseTpl"`);
+    });
+
+    it('should show/hide the elseTpl', fakeAsync(() => {
+      security.setPermissions(['A']);
+      fixture.detectChanges();
+      expectHidden('OK');
+      expectVisible('ELSE');
+
+      security.setPermissions(['X']);
+      fixture.detectChanges();
+      expectVisible('OK');
+      expectHidden('ELSE');
+    }));
+  });
+
+
+
+  describe('when no input and every items', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasRoles`);
+    });
+
+    it('should not show the element', fakeAsync(() => {
+      security.setRoles(['X']);
+      fixture.detectChanges();
+      expectHidden('OK');
+    }));
+  });
+
+
+  describe('when no input and first items', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasAnyRoles`);
+    });
+
+    it('should not show the element', fakeAsync(() => {
+      security.setRoles(['X']);
+      fixture.detectChanges();
+      expectHidden('OK');
+    }));
+  });
+
 
 });
