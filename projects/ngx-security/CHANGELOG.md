@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.0.0...ngx-security@2.1.0) (2018-10-04)
+
+
+### Features
+
+* adding type CheckerResult ([cfd876e](https://github.com/mselerin/ngx-security/commit/cfd876e))
+* Checker functions now return Observable<boolean> | boolean ([b63fad1](https://github.com/mselerin/ngx-security/commit/b63fad1))
+
+
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/mselerin/ngx-security/compare/ngx-security@1.0.0...ngx-security@2.0.0) (2018-10-04)
 
