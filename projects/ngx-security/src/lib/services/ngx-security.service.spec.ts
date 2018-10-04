@@ -8,16 +8,14 @@ describe('NgxSecurityService', () => {
   let security: NgxSecurityService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [NgxSecurityModule]
-    });
-
-    security = TestBed.get(NgxSecurityService);
+    security = new NgxSecurityService();
   });
+
 
   it('should be created', () => {
     expect(security).toBeTruthy();
   });
+
 
   it('should be false after reset', fakeAsync(() => {
     security.setAuthenticatedChecker(() => of(true));
