@@ -34,15 +34,24 @@ describe('NgxSecurityDirectives', () => {
     expect(security).toBeDefined();
   };
 
+  const expectVisibility = (okVisible: boolean, elseVisible?: boolean) => {
+    let okDiv = element.querySelector(`#OK`);
+    let elseDiv = element.querySelector(`#ELSE`);
 
-  const expectVisible = (name: string) => {
-    let div = element.querySelector(`#${name}`);
-    expect(div).not.toBeNull();
-    expect(div.textContent).toBe(name);
+    okVisible ? expectVisible(okDiv) : expectHidden(okDiv);
+
+    if (elseVisible !== undefined)
+      elseVisible ? expectVisible(elseDiv) : expectHidden(elseDiv);
   };
 
-  const expectHidden = (name: string) => {
-    let div = element.querySelector(`#${name}`);
+
+  const expectVisible = (div: any) => {
+    expect(div).not.toBeNull();
+    expect(div.textContent).not.toBeNull();
+    expect(div.textContent.length).toBeGreaterThan(0);
+  };
+
+  const expectHidden = (div: any) => {
     expect(div).toBeNull();
   };
 
@@ -64,25 +73,25 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if not authenticated', fakeAsync(() => {
       security.setAuthenticated(false);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if authenticated', fakeAsync(() => {
       security.setAuthenticated(true);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
 
 
     it('should show/hide the element when switching authenticated', fakeAsync(() => {
       security.setAuthenticated(true);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
 
       security.setAuthenticated(false);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
   });
 
@@ -96,14 +105,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if not anonymous', fakeAsync(() => {
       security.setAuthenticated(true);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if anonymous', fakeAsync(() => {
       security.setAuthenticated(false);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -118,14 +127,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has not roles', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has roles', fakeAsync(() => {
       security.setRoles(['X', 'Y', 'Z']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -138,13 +147,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setRoles(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setRoles(['X', 'Y', 'Z']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -158,14 +165,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has roles', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has not roles', fakeAsync(() => {
       security.setRoles(['A', 'B', 'C']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -178,13 +185,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setRoles(['A', 'B', 'C']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -198,14 +203,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has not any roles', fakeAsync(() => {
       security.setRoles(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has any roles', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -218,13 +223,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setRoles(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -243,14 +246,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if not member of groups', fakeAsync(() => {
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if member of groups', fakeAsync(() => {
       security.setGroups(['X', 'Y', 'Z']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -263,13 +266,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setGroups(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -283,14 +284,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if member of groups', fakeAsync(() => {
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if not member of groups', fakeAsync(() => {
       security.setGroups(['A', 'B', 'C']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -303,13 +304,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setGroups(['A']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -323,14 +322,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if not member of any groups', fakeAsync(() => {
       security.setGroups(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if member of any groups', fakeAsync(() => {
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -343,13 +342,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setGroups(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setGroups(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -364,14 +361,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has not permissions', fakeAsync(() => {
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has permissions', fakeAsync(() => {
       security.setPermissions(['X', 'Y', 'Z']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -384,13 +381,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setPermissions(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -404,14 +399,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has permissions', fakeAsync(() => {
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has not permissions', fakeAsync(() => {
       security.setPermissions(['A', 'B', 'C']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -424,13 +419,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setPermissions(['A']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -444,14 +437,14 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element if has not any permissions', fakeAsync(() => {
       security.setPermissions(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
 
 
     it('should show the element if has any permissions', fakeAsync(() => {
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
+      expectVisibility(true);
     }));
   });
 
@@ -464,13 +457,11 @@ describe('NgxSecurityDirectives', () => {
     it('should show/hide the elseTpl', fakeAsync(() => {
       security.setPermissions(['A']);
       fixture.detectChanges();
-      expectHidden('OK');
-      expectVisible('ELSE');
+      expectVisibility(false, true);
 
       security.setPermissions(['X']);
       fixture.detectChanges();
-      expectVisible('OK');
-      expectHidden('ELSE');
+      expectVisibility(true, false);
     }));
   });
 
@@ -484,7 +475,7 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
   });
 
@@ -497,7 +488,7 @@ describe('NgxSecurityDirectives', () => {
     it('should not show the element', fakeAsync(() => {
       security.setRoles(['X']);
       fixture.detectChanges();
-      expectHidden('OK');
+      expectVisibility(false);
     }));
   });
 
