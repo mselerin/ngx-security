@@ -11,7 +11,7 @@ import {
 import { NgxSecurityService } from '../services/ngx-security.service';
 import { NgxSecurityGuardOptions } from '../models/ngx-security.model';
 import { merge, Observable } from 'rxjs';
-import { every, tap } from 'rxjs/operators';
+import { every, map, tap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
@@ -54,6 +54,9 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
 
     if (guardOptions.authenticated === true)
       allObs$.push(this.security.isAuthenticated());
+
+    else if (guardOptions.authenticated === false)
+      allObs$.push(this.security.isAuthenticated().pipe(map(auth => !auth)));
 
     if (Array.isArray(guardOptions.roles)) {
       let obs$ = guardOptions.roles.map(n => this.security.hasRole(n));
