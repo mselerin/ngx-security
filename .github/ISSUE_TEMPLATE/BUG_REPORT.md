@@ -1,12 +1,8 @@
-## I'm submitting a...
-<!-- Check one of the following options with "x" -->
-```
-[ ] Regression (a behavior that used to work and stopped working in a new release)
-[ ] Bug report  <!-- Please search GitHub for a similar issue or PR before submitting -->
-[ ] Feature request
-[ ] Documentation issue or request
-```
+---
+name: 💥 Report an issue
+about: Report a problem with ngx-security itself.
 
+---
 
 ### Expected Behavior
 <!-- Describe what the desired behavior would be. -->
