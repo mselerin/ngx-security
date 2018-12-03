@@ -6,6 +6,8 @@
   <button (click)="switchAuthentication()">Switch auth</button>
 </div>
 
+<app-sample *secuIsAuthenticated></app-sample>
+
 <div>
   <b>Authenticated ?</b>&nbsp;
   <span *secuIsAuthenticated>YES</span>

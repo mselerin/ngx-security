@@ -8,6 +8,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   protected elseTemplateRef: TemplateRef<any>;
   protected expectedValue: boolean;
+  private lastValue?: boolean;
 
   constructor(
     protected security: NgxSecurityService,
@@ -15,6 +16,8 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
     protected viewContainer: ViewContainerRef
   ) {
     this.expectedValue = true;
+    this.lastValue = null;
+
     this.postConstruct();
   }
 
@@ -36,13 +39,16 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   private handleStateChange(): void {
     this.isAuthorized().pipe(
       map(hasPerm => {
-        this.viewContainer.clear();
+        if (this.lastValue !== hasPerm) {
+          this.lastValue = hasPerm;
+          this.viewContainer.clear();
 
-        if (hasPerm)
-          this.viewContainer.createEmbeddedView(this.templateRef);
+          if (hasPerm)
+            this.viewContainer.createEmbeddedView(this.templateRef);
 
-        else if (this.elseTemplateRef)
-          this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+          else if (this.elseTemplateRef)
+            this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+        }
       })
     ).subscribe();
   }

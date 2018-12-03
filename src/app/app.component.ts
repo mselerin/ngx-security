@@ -1,6 +1,6 @@
-import { NgxSecurityService } from 'ngx-security';
-import { Component, OnInit } from '@angular/core';
 import { of } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { NgxSecurityService } from 'ngx-security';
 
 @Component({
   selector: 'app-root',
