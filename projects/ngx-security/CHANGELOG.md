@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.1.0...ngx-security@2.2.0) (2018-12-03)
+
+
+### Bug Fixes
+
+* when no change in directive evaluation, do nothing instead of clearing component ([658fa43](https://github.com/mselerin/ngx-security/commit/658fa43))
+
+
+### Features
+
+* allow guard with `authenticated: false` ([0d7051a](https://github.com/mselerin/ngx-security/commit/0d7051a))
+
+
+
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.0.0...ngx-security@2.1.0) (2018-10-04)
 
