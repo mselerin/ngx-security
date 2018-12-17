@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.3.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.2.0...ngx-security@2.3.0) (2018-12-17)
+
+
+### Features
+
+* update angular range (allow >=6.0.0) ([50c4ed0](https://github.com/mselerin/ngx-security/commit/50c4ed0))
+
+
+
+
+
 # [2.2.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.1.0...ngx-security@2.2.0) (2018-12-03)
 
 
