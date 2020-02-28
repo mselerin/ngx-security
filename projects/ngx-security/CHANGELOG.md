@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.3.0...ngx-security@2.4.0) (2020-02-28)
+
+
+### Features
+
+* `NgxSecurityState.permissionsChecker` and `NgxSecurityService.hasPermission` accept a 2nd parameter of type `any` ([eb878fe](https://github.com/mselerin/ngx-security/commit/eb878fe2e13c6b968e91777564fcb29eeb0f8542))
+
+
+
+
+
+
 # [2.3.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.2.0...ngx-security@2.3.0) (2018-12-17)
 
 
