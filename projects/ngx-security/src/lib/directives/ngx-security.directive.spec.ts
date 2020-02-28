@@ -1,19 +1,22 @@
-import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
-import { NgxSecurityService } from '../services/ngx-security.service';
-import { Component } from '@angular/core';
-import { NgxSecurityModule } from '../ngx-security.module';
+import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {NgxSecurityService} from '../services/ngx-security.service';
+import {Component} from '@angular/core';
+import {NgxSecurityModule} from '../ngx-security.module';
+import {of} from "rxjs";
 
 @Component({
   selector: 'test-security',
   template: `<div>TEST</div>`
 })
-export class TestSecuredComponent {}
+export class TestSecuredComponent {
+  public foo = {value: ''};
+}
 
 
 
 describe('NgxSecurityDirectives', () => {
-  let security;
-  let fixture;
+  let security: NgxSecurityService;
+  let fixture: ComponentFixture<TestSecuredComponent>;
   let element;
 
 
@@ -30,7 +33,7 @@ describe('NgxSecurityDirectives', () => {
     element = fixture.nativeElement;
     expect(element).toBeDefined();
 
-    security = TestBed.get(NgxSecurityService);
+    security = TestBed.inject(NgxSecurityService);
     expect(security).toBeDefined();
   };
 
@@ -386,6 +389,25 @@ describe('NgxSecurityDirectives', () => {
       security.setPermissions(['X']);
       fixture.detectChanges();
       expectVisibility(true, false);
+    }));
+  });
+
+
+  describe('secuHasPermissions with resource', () => {
+    beforeEach(() => {
+      instantiateTest(`*secuHasPermissions="['X', 'Y']; resource: foo"`);
+    });
+
+    it('should show/hide the component', fakeAsync(() => {
+      security.setPermissionChecker((perm, resource) => of(resource.value === 'bar'));
+
+      fixture.componentInstance.foo = {value: 'foo'};
+      fixture.detectChanges();
+      expectVisibility(false);
+
+      fixture.componentInstance.foo = {value: 'bar'};
+      fixture.detectChanges();
+      expectVisibility(true);
     }));
   });
 

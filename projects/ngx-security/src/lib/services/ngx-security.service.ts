@@ -133,7 +133,7 @@ export class NgxSecurityService
 
 
 
-  public setPermissionChecker(fn: (name: string) => CheckerResult): void {
+  public setPermissionChecker(fn: (name: string, resource?: any) => CheckerResult): void {
     this.updateState({ permissionsChecker: fn });
   }
 
@@ -149,7 +149,7 @@ export class NgxSecurityService
     this.setPermissions([]);
   }
 
-  public hasPermission(name: string): Observable<boolean> {
+  public hasPermission(name: string, resource?: any): Observable<boolean> {
     // Check inside state
     const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name);
     if (check)
@@ -157,7 +157,7 @@ export class NgxSecurityService
 
     // Check with callback
     if (this.securityState.permissionsChecker)
-      return asObservable(this.securityState.permissionsChecker(name));
+      return asObservable(this.securityState.permissionsChecker(name, resource));
 
     // Default
     return of(false);

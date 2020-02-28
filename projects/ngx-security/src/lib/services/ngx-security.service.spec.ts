@@ -113,7 +113,7 @@ describe('NgxSecurityService', () => {
     tick();
 
     security.setPermissionChecker(() => of(true));
-    security.hasPermission('X').subscribe(d => expect(d).toBeTruthy());
+    security.hasPermission('X', {foo: 'bar'}).subscribe(d => expect(d).toBeTruthy());
     tick();
 
     security.addPermission('Y');

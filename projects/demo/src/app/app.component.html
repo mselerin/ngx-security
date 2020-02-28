@@ -4,6 +4,7 @@
 
 <div>
   <button (click)="switchAuthentication()">Switch auth</button>
+  <button (click)="toggleFoo()">Toggle foo</button>
 </div>
 
 <app-sample *secuIsAuthenticated></app-sample>
@@ -48,3 +49,14 @@
     <span>NO</span>
   </ng-template>
 </div>
+
+
+
+<div>
+  <b>HasPermission('foo', {{'{'}}foo: {{foo.value}}{{'}'}}) ?</b>&nbsp;
+  <span *secuHasPermissions="'foo'; resource: foo; else permElse">YES</span>
+  <ng-template #permElse>
+    <span>NO</span>
+  </ng-template>
+</div>
+

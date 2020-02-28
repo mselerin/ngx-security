@@ -7,6 +7,7 @@ import { every, first, map, tap } from 'rxjs/operators';
 export class BaseSecurityDirective implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   protected elseTemplateRef: TemplateRef<any>;
+  protected resource: any;
   protected expectedValue: boolean;
   private lastValue?: boolean;
 
@@ -36,7 +37,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   }
 
 
-  private handleStateChange(): void {
+  protected handleStateChange(): void {
     this.isAuthorized().pipe(
       map(hasPerm => {
         if (this.lastValue !== hasPerm) {
@@ -213,8 +214,13 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
+  @Input('secuHasPermissionsResource') set testedResource(resource: any) {
+    this.resource = resource;
+    this.handleStateChange();
+  }
+
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasPermission(n)), true);
+    return this.testEvery(this.input, (n => this.security.hasPermission(n, this.resource)), true);
   }
 }
 
@@ -227,8 +233,13 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
+  @Input('secuHasNotPermissionsResource') set testedResource(resource: any) {
+    this.resource = resource;
+    this.handleStateChange();
+  }
+
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasPermission(n)), false);
+    return this.testEvery(this.input, (n => this.security.hasPermission(n, this.resource)), false);
   }
 }
 
@@ -241,7 +252,12 @@ export class HasAnyPermissionsDirective extends BaseSecurityDirective {
     this.elseTemplateRef = elseBlock;
   }
 
+  @Input('secuHasAnyPermissionsResource') set testedResource(resource: any) {
+    this.resource = resource;
+    this.handleStateChange();
+  }
+
   isAuthorized(): Observable<boolean> {
-    return this.testFirst(this.input, (n => this.security.hasPermission(n)), true);
+    return this.testFirst(this.input, (n => this.security.hasPermission(n, this.resource)), true);
   }
 }

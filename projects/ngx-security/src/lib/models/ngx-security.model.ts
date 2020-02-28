@@ -12,7 +12,7 @@ export interface NgxSecurityState {
   authenticationChecker: () => CheckerResult;
   rolesChecker: (name: string) => CheckerResult;
   groupsChecker: (name: string) => CheckerResult;
-  permissionsChecker: (name: string) => CheckerResult;
+  permissionsChecker: (name: string, resource?: any) => CheckerResult;
 }
 
 
