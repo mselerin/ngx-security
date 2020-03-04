@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.1](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.0...ngx-security@2.4.1) (2020-03-04)
+
+
+### Bug Fixes
+
+* revert to Angular 8 to resolve the TS1086 error with older project ([#1](https://github.com/mselerin/ngx-security/issues/1)) ([4b76135](https://github.com/mselerin/ngx-security/commit/4b761351721fb4f98b208196abb5f8a2f5dd386f))
+
+
+
+
+
+
 # [2.4.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.3.0...ngx-security@2.4.0) (2020-02-28)
 
 
