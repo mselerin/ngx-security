@@ -33,7 +33,7 @@ describe('NgxSecurityDirectives', () => {
     element = fixture.nativeElement;
     expect(element).toBeDefined();
 
-    security = TestBed.inject(NgxSecurityService);
+    security = TestBed.get(NgxSecurityService);
     expect(security).toBeDefined();
   };
 
