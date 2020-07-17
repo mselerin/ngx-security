@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {NgxSecurityService} from 'ngx-security';
 
 @Component({
@@ -7,15 +7,10 @@ import {NgxSecurityService} from 'ngx-security';
     <p>Sample Component <button type="button" (click)="touch()">Touch</button></p>
   `
 })
-export class SampleComponent implements OnInit
-{
+export class SampleComponent {
   constructor(
     private security: NgxSecurityService
   ) {}
-
-  ngOnInit() {
-    console.log('ngOnInit');
-  }
 
   touch() {
     this.security.touch();

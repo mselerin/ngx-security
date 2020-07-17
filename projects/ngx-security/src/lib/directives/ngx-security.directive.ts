@@ -32,8 +32,9 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.stateSubscription)
+    if (this.stateSubscription) {
       this.stateSubscription.unsubscribe();
+    }
   }
 
 

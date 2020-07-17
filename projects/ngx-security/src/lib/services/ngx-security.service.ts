@@ -12,8 +12,7 @@ export function asObservable(obs: CheckerResult): Observable<boolean> {
 
 
 @Injectable({ providedIn: 'root' })
-export class NgxSecurityService
-{
+export class NgxSecurityService {
   private readonly stateSource: BehaviorSubject<void>;
   public readonly state$: Observable<void>;
 
