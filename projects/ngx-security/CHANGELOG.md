@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.2](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.1...ngx-security@2.4.2) (2020-09-17)
+
+
+### Bug Fixes
+
+* groups, roles and permissions should be case insensitive ([#3](https://github.com/mselerin/ngx-security/issues/3)) ([02c2d5a](https://github.com/mselerin/ngx-security/commit/02c2d5a68382a8c4bc1c80988db235e1ff93b6b8))
+
+
+
+
+
 ## [2.4.1](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.0...ngx-security@2.4.1) (2020-03-04)
 
 
