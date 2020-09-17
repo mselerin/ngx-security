@@ -84,13 +84,15 @@ export class NgxSecurityService {
 
   public hasRole(role: string): Observable<boolean> {
     // Check inside state
-    const check = this.securityState.roles.some((r: string) => r.toUpperCase() === role);
-    if (check)
+    const check = this.securityState.roles.some((r: string) => r.toUpperCase() === role.toUpperCase());
+    if (check) {
       return of(check);
+    }
 
     // Check with callback
-    if (this.securityState.rolesChecker)
+    if (this.securityState.rolesChecker) {
       return asObservable(this.securityState.rolesChecker(role));
+    }
 
     // Default
     return of(false);
@@ -117,13 +119,15 @@ export class NgxSecurityService {
 
   public isMemberOf(group: string): Observable<boolean> {
     // Check inside state
-    const check = this.securityState.groups.some((r: string) => r.toUpperCase() === group);
-    if (check)
+    const check = this.securityState.groups.some((r: string) => r.toUpperCase() === group.toUpperCase());
+    if (check) {
       return of(check);
+    }
 
     // Check with callback
-    if (this.securityState.groupsChecker)
+    if (this.securityState.groupsChecker) {
       return asObservable(this.securityState.groupsChecker(group));
+    }
 
     // Default
     return of(false);
@@ -150,7 +154,7 @@ export class NgxSecurityService {
 
   public hasPermission(name: string, resource?: any): Observable<boolean> {
     // Check inside state
-    const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name);
+    const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name.toUpperCase());
     if (check)
       return of(check);
 
