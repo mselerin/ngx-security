@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.3](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.2...ngx-security@2.4.3) (2021-01-04)
+
+
+### Bug Fixes
+
+* before filtering observables with `every`, use `take` to prevent the resulting observable from infinite waiting ([1fc6913](https://github.com/mselerin/ngx-security/commit/1fc691310609fcf61aba75ba201ba56d72039cba))
+* use `isObservable` from rxjs to detect if the `CheckerResult` is an observable or not ([7405fa3](https://github.com/mselerin/ngx-security/commit/7405fa32cedf6eedef38bfdbdcd5e982fbb08b54))
+
+
+
+
+
 ## [2.4.2](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.1...ngx-security@2.4.2) (2020-09-17)
 
 
