@@ -1,7 +1,7 @@
-import { merge, Observable, of, Subscription } from 'rxjs';
 import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { merge, Observable, of, Subscription } from 'rxjs';
+import { every, first, map, take, tap } from 'rxjs/operators';
 import { NgxSecurityService } from '../services/ngx-security.service';
-import { every, first, map, tap } from 'rxjs/operators';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
@@ -52,7 +52,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
             this.viewContainer.createEmbeddedView(this.elseTemplateRef);
         }
       })
-    ).subscribe();
+    ).subscribe().unsubscribe();
   }
 
   /* istanbul ignore next */
@@ -74,6 +74,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
     }
 
     return merge(...obs$).pipe(
+      take(obs$.length),
       every(r => r === expected)
     );
   }
@@ -91,6 +92,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
     }
 
     return merge(...obs$).pipe(
+      take(obs$.length),
       first(r => r === expected, false)
     );
   }
@@ -102,7 +104,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 export class IsAuthenticatedDirective extends BaseSecurityDirective {
   isAuthorized(): Observable<boolean> {
     return this.security.isAuthenticated().pipe(
-      map ((auth: boolean) => auth === this.expectedValue)
+      map(auth => auth === this.expectedValue)
     );
   }
 }
