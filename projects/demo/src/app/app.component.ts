@@ -1,6 +1,7 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
-import {NgxSecurityService} from 'ngx-security';
-import {map} from "rxjs/operators";
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { NgxSecurityService } from 'ngx-security';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import {map} from "rxjs/operators";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  private authenticated: boolean = false;
+  private authenticated$ = new BehaviorSubject<boolean>(false);
   public foo = { value: 'foo' };
 
   constructor(
@@ -17,24 +18,32 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.security.setPermissionChecker((name: string, resource?: any) => {
-      return this.security.isAuthenticated().pipe(
-        map(authenticated => authenticated && resource && resource.value === 'foo')
-      );
+    this.security.updateState({
+      authenticationChecker: () => this.authenticated$,
+      permissionsChecker: (perm: string, resource?: any) => {
+        return this.security.isAuthenticated().pipe(
+          map(authenticated => authenticated && resource && resource.value === 'foo')
+        );
+      }
     });
-
-    this.security.setAuthenticated(this.authenticated);
   }
 
 
   switchAuthentication() {
-    this.authenticated = !this.authenticated;
+    const authenticated = !this.authenticated$.value;
+    this.authenticated$.next(authenticated);
 
-    this.security.updateState({
-      authenticated: this.authenticated,
-      roles: ['ADMIN', 'USER'],
-      groups: ['GROUP_A', 'GROUP_B']
-    });
+    if (authenticated) {
+      this.security.updateState({
+        roles: ['ADMIN', 'USER'],
+        groups: ['GROUP_A', 'GROUP_B']
+      });
+    } else {
+      this.security.updateState({
+        roles: [],
+        groups: []
+      });
+    }
   }
 
   toggleFoo() {
