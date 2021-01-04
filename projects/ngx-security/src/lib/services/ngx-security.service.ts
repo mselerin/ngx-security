@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, isObservable, Observable, of } from 'rxjs';
 import { CheckerResult, NgxSecurityState } from '../models/ngx-security.model';
 
 
 export function asObservable(obs: CheckerResult): Observable<boolean> {
-  if (obs instanceof Observable)
+  if (isObservable(obs)) {
     return obs;
+  }
 
   return of(obs);
 }
@@ -53,15 +54,17 @@ export class NgxSecurityService {
   public isAuthenticated(): Observable<boolean> {
     // Check inside state
     const check = this.securityState.authenticated;
-    if (check)
+    if (check) {
       return of(check);
+    }
 
     // Check with callback
-    if (this.securityState.authenticationChecker)
+    if (this.securityState.authenticationChecker) {
       return asObservable(this.securityState.authenticationChecker());
+    }
 
     // Default
-    return of(false);
+    return of(this.securityState.authenticated);
   }
 
 
@@ -155,12 +158,14 @@ export class NgxSecurityService {
   public hasPermission(name: string, resource?: any): Observable<boolean> {
     // Check inside state
     const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name.toUpperCase());
-    if (check)
+    if (check) {
       return of(check);
+    }
 
     // Check with callback
-    if (this.securityState.permissionsChecker)
+    if (this.securityState.permissionsChecker) {
       return asObservable(this.securityState.permissionsChecker(name, resource));
+    }
 
     // Default
     return of(false);
@@ -169,8 +174,9 @@ export class NgxSecurityService {
 
 
   public updateState(partialState: Partial<NgxSecurityState>): void {
-    if (!this.securityState)
-      this.securityState = { ...this.INITIAL_STATE };
+    if (!this.securityState) {
+      this.securityState = {...this.INITIAL_STATE};
+    }
 
     this.securityState = { ...this.securityState, ...partialState };
     this.touch();
