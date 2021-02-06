@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.4](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.3...ngx-security@2.4.4) (2021-02-06)
+
+
+### Bug Fixes
+
+* use `take(1)` inside `handleStateChange` instead of `unsubscribe()` ([704679f](https://github.com/mselerin/ngx-security/commit/704679f5bbe590a7b51dcd91cf7837c39caf96fb))
+
+
+
+
+
 ## [2.4.3](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.2...ngx-security@2.4.3) (2021-01-04)
 
 
