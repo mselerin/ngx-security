@@ -40,6 +40,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 
   protected handleStateChange(): void {
     this.isAuthorized().pipe(
+      take(1),
       map(hasPerm => {
         if (this.lastValue !== hasPerm) {
           this.lastValue = hasPerm;
@@ -52,7 +53,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
             this.viewContainer.createEmbeddedView(this.elseTemplateRef);
         }
       })
-    ).subscribe().unsubscribe();
+    ).subscribe();
   }
 
   /* istanbul ignore next */
