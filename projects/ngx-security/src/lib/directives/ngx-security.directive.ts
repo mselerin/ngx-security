@@ -8,6 +8,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   protected elseTemplateRef: TemplateRef<any>;
   protected resource: any;
+  protected resourceInitialized = false;
   protected expectedValue: boolean;
   private lastValue?: boolean;
 
@@ -220,7 +221,12 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
 
   @Input('secuHasPermissionsResource') set testedResource(resource: any) {
     this.resource = resource;
-    this.handleStateChange();
+
+    if (this.resourceInitialized) {
+      this.handleStateChange();
+    }
+
+    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {
@@ -239,7 +245,12 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
 
   @Input('secuHasNotPermissionsResource') set testedResource(resource: any) {
     this.resource = resource;
-    this.handleStateChange();
+
+    if (this.resourceInitialized) {
+      this.handleStateChange();
+    }
+
+    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {

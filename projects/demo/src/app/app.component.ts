@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NgxSecurityService } from 'ngx-security';
-import { BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { SecurityService } from "./security.service";
 
 @Component({
   selector: 'app-root',
@@ -10,36 +9,32 @@ import { map } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  private authenticated$ = new BehaviorSubject<boolean>(false);
   public foo = { value: 'foo' };
 
   constructor(
-    private security: NgxSecurityService
+    private ngxSecurity: NgxSecurityService,
+    private security: SecurityService
   ) {}
 
   ngOnInit() {
-    this.security.updateState({
-      authenticationChecker: () => this.authenticated$,
-      permissionsChecker: (perm: string, resource?: any) => {
-        return this.security.isAuthenticated().pipe(
-          map(authenticated => authenticated && resource && resource.value === 'foo')
-        );
-      }
+    this.ngxSecurity.updateState({
+      authenticationChecker: () => this.security.isAuthenticated(),
+      permissionsChecker: (perm: string, resource?: any) => this.security.hasPermission(perm, resource)
     });
   }
 
 
   switchAuthentication() {
-    const authenticated = !this.authenticated$.value;
-    this.authenticated$.next(authenticated);
+    const authenticated = !this.security.authenticated$.value;
+    this.security.authenticated$.next(authenticated);
 
     if (authenticated) {
-      this.security.updateState({
+      this.ngxSecurity.updateState({
         roles: ['ADMIN', 'USER'],
         groups: ['GROUP_A', 'GROUP_B']
       });
     } else {
-      this.security.updateState({
+      this.ngxSecurity.updateState({
         roles: [],
         groups: []
       });
