@@ -25,10 +25,11 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   protected postConstruct(): void {}
 
   ngOnInit(): void {
-    if (this.security)
+    if (this.security) {
       this.stateSubscription = this.security.state$.pipe(
-        tap(() => { this.handleStateChange(); })
+        tap(() => this.handleStateChange())
       ).subscribe();
+    }
   }
 
   ngOnDestroy(): void {

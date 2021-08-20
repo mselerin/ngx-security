@@ -2,7 +2,7 @@ import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {NgxSecurityService} from '../services/ngx-security.service';
 import {Component} from '@angular/core';
 import {NgxSecurityModule} from '../ngx-security.module';
-import {of} from "rxjs";
+import {of} from 'rxjs';
 
 @Component({
   selector: 'test-security',
@@ -128,7 +128,7 @@ describe('NgxSecurityDirectives', () => {
     });
 
     it('should not show the element if has not roles', fakeAsync(() => {
-      security.setRoles(['X']);
+      security.setRolesChecker(() => of(false));
       fixture.detectChanges();
       expectVisibility(false);
     }));
