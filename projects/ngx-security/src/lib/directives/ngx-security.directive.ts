@@ -8,7 +8,6 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   private stateSubscription: Subscription;
   protected elseTemplateRef: TemplateRef<any>;
   protected resource: any;
-  protected resourceInitialized = false;
   protected expectedValue: boolean;
   private lastValue?: boolean;
 
@@ -56,7 +55,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
             this.viewContainer.createEmbeddedView(this.elseTemplateRef);
           }
 
-          this.cd.detectChanges()
+          this.cd.detectChanges();
         }
       })
     ).subscribe();
@@ -225,12 +224,12 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
   }
 
   @Input('secuHasPermissionsResource') set testedResource(resource: any) {
+    const resourceChanged = (this.resource !== resource);
     this.resource = resource;
-    if (this.resourceInitialized) {
+
+    if (resourceChanged) {
       this.handleStateChange();
     }
-
-    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {
@@ -248,12 +247,12 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
   }
 
   @Input('secuHasNotPermissionsResource') set testedResource(resource: any) {
+    const resourceChanged = (this.resource !== resource);
     this.resource = resource;
-    if (this.resourceInitialized) {
+
+    if (resourceChanged) {
       this.handleStateChange();
     }
-
-    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {
@@ -271,12 +270,12 @@ export class HasAnyPermissionsDirective extends BaseSecurityDirective {
   }
 
   @Input('secuHasAnyPermissionsResource') set testedResource(resource: any) {
+    const resourceChanged = (this.resource !== resource);
     this.resource = resource;
-    if (this.resourceInitialized) {
+
+    if (resourceChanged) {
       this.handleStateChange();
     }
-
-    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {
