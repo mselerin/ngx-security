@@ -1,7 +1,7 @@
-import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { every, first, map, take, tap } from 'rxjs/operators';
-import { NgxSecurityService } from '../services/ngx-security.service';
+import {ChangeDetectorRef, Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
+import {merge, Observable, of, Subscription} from 'rxjs';
+import {every, first, map, take, tap} from 'rxjs/operators';
+import {NgxSecurityService} from '../services/ngx-security.service';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
@@ -14,6 +14,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 
   constructor(
     protected security: NgxSecurityService,
+    protected cd: ChangeDetectorRef,
     protected templateRef: TemplateRef<any>,
     protected viewContainer: ViewContainerRef
   ) {
@@ -48,11 +49,15 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
           this.lastValue = hasPerm;
           this.viewContainer.clear();
 
-          if (hasPerm)
+          if (hasPerm) {
             this.viewContainer.createEmbeddedView(this.templateRef);
+          }
 
-          else if (this.elseTemplateRef)
+          else if (this.elseTemplateRef) {
             this.viewContainer.createEmbeddedView(this.elseTemplateRef);
+          }
+
+          this.cd.detectChanges();
         }
       })
     ).subscribe();
@@ -222,7 +227,6 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
 
   @Input('secuHasPermissionsResource') set testedResource(resource: any) {
     this.resource = resource;
-
     if (this.resourceInitialized) {
       this.handleStateChange();
     }
@@ -246,7 +250,6 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
 
   @Input('secuHasNotPermissionsResource') set testedResource(resource: any) {
     this.resource = resource;
-
     if (this.resourceInitialized) {
       this.handleStateChange();
     }
@@ -270,7 +273,11 @@ export class HasAnyPermissionsDirective extends BaseSecurityDirective {
 
   @Input('secuHasAnyPermissionsResource') set testedResource(resource: any) {
     this.resource = resource;
-    this.handleStateChange();
+    if (this.resourceInitialized) {
+      this.handleStateChange();
+    }
+
+    this.resourceInitialized = true;
   }
 
   isAuthorized(): Observable<boolean> {
