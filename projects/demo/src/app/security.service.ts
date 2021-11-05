@@ -39,7 +39,17 @@ export class SecurityService {
   public hasPermission(perm: string, resource?: any): Observable<boolean> {
     console.log("hasPermission", perm, resource);
     return this.isAuthenticated().pipe(
-      map(authenticated => authenticated && resource && resource.value === 'foo')
+      map(authenticated => {
+        if (!authenticated) {
+          return false;
+        }
+
+        if (perm === 'foo') {
+          return resource && resource.value === 'foo';
+        }
+
+        return true;
+      })
     );
   }
 }
