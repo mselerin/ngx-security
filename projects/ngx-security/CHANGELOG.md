@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.4.6](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.5...ngx-security@2.4.6) (2021-11-05)
+
+
+### Bug Fixes
+
+* `secuHasPermissions` is still called twice when used with a resource ([57739de](https://github.com/mselerin/ngx-security/commit/57739de211704af08621ffd8ddd10077aff1f661))
+* force changes detection when the authorization change ([1268ead](https://github.com/mselerin/ngx-security/commit/1268ead24e32721ad7a8554cf3645c96b9737b1e))
+
+
+
+
+
+
 ## [2.4.5](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.4...ngx-security@2.4.5) (2021-08-20)
 
 
