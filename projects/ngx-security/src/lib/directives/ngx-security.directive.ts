@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
-import {merge, Observable, of, Subscription} from 'rxjs';
-import {every, first, map, take, tap} from 'rxjs/operators';
-import {NgxSecurityService} from '../services/ngx-security.service';
+import { merge, Observable, of, Subscription } from 'rxjs';
+import { every, first, map, take, tap } from 'rxjs/operators';
+import { NgxSecurityService } from '../services/ngx-security.service';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
@@ -14,9 +14,9 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
 
   constructor(
     protected security: NgxSecurityService,
-    protected cd: ChangeDetectorRef,
     protected templateRef: TemplateRef<any>,
-    protected viewContainer: ViewContainerRef
+    protected viewContainer: ViewContainerRef,
+    protected cd: ChangeDetectorRef
   ) {
     this.expectedValue = true;
     this.lastValue = null;
@@ -27,11 +27,10 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   protected postConstruct(): void {}
 
   ngOnInit(): void {
-    if (this.security) {
+    if (this.security)
       this.stateSubscription = this.security.state$.pipe(
-        tap(() => this.handleStateChange())
+        tap(() => { this.handleStateChange(); })
       ).subscribe();
-    }
   }
 
   ngOnDestroy(): void {
@@ -57,7 +56,7 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
             this.viewContainer.createEmbeddedView(this.elseTemplateRef);
           }
 
-          this.cd.detectChanges();
+          this.cd.detectChanges()
         }
       })
     ).subscribe();
