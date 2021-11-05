@@ -6,7 +6,6 @@
       "jest",
       "node"
     ],
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true
   },
   "files": [

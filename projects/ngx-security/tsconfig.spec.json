@@ -6,7 +6,6 @@
       "jasmine",
       "node"
     ],
-    "emitDecoratorMetadata": true,
     "esModuleInterop": true
   },
   "include": [
