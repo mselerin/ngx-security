@@ -1,6 +1,6 @@
 {
   "name": "ngx-security",
-  "version": "2.4.5",
+  "version": "3.0.0-dev",
   "repository": {
     "type": "git",
     "url": "https://github.com/mselerin/ngx-security"
@@ -10,9 +10,12 @@
     "email": "michel.selerin@outlook.com"
   },
   "license": "MIT",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "peerDependencies": {
-    "@angular/common": ">=6.0.0",
-    "@angular/core": ">=6.0.0",
-    "tslib": ">=1.9.0"
+    "@angular/common": ">=12.0.0",
+    "@angular/core": ">=12.0.0",
+    "rxjs": ">=6.5.0"
   }
 }
