@@ -64,13 +64,10 @@ export class SampleComponent
   ) {}
 
   login() {
-    // Value directly setted
-    this.security.setAuthenticated(true);
-    this.security.setRoles(['ADMIN', 'USER']);
-    this.security.addRole('EDITOR');
-    this.security.setGroups(['GROUP_A', 'GROUP_B']);
+    this.security.setAuthenticationChecker(() => {
+      return of(true);
+    });
     
-    // Checker function for more complex case
     this.security.setPermissionChecker((perm: string) => {
       return this.http.get(`/api/auth/permissions/has/${perm}`).pipe(
         map(() => true)
