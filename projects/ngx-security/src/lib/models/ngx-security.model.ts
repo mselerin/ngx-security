@@ -8,20 +8,22 @@ export interface NgxSecurityState {
   permissionsChecker: (name: string, resource?: any) => Observable<boolean>;
 }
 
-export enum NgxSecurityCheckMode {
-  ALL, NONE, ANY
-}
-
-export interface NgxSecurityGuardCheck {
-  mode?: NgxSecurityCheckMode;
-  values?: string[];
-}
 
 export interface NgxSecurityGuardOptions {
-  authenticated?: boolean;
-  roles?: NgxSecurityGuardCheck;
-  groups?: NgxSecurityGuardCheck;
-  permissions?: NgxSecurityGuardCheck;
+  isAuthenticated?: boolean;
+
+  hasAllRoles?: string | string[];
+  hasAnyRoles?: string | string[];
+  hasNotRoles?: string | string[];
+
+  isMemberOfAll?: string | string[];
+  isMemberOfAny?: string | string[];
+  isMemberOfNone?: string | string[];
+
+  hasAllPermissions?: string | string[];
+  hasAnyPermissions?: string | string[];
+  hasNotPermissions?: string | string[];
+
   redirectTo?: string;
   authorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;
   unauthorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;

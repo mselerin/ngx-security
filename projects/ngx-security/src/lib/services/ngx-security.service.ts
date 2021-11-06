@@ -69,7 +69,7 @@ export class NgxSecurityService {
     return this.testAny(roles, (r => this.hasRole(r)));
   }
 
-  public hasNoRoles(roles: string | string[]): Observable<boolean> {
+  public hasNotRoles(roles: string | string[]): Observable<boolean> {
     return this.testNone(roles, (r => this.hasRole(r)));
   }
 
@@ -124,7 +124,7 @@ export class NgxSecurityService {
     return this.testAny(perms, (n => this.hasPermission(n, resource)));
   }
 
-  public hasNoPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+  public hasNotPermissions(perms: string | string[], resource?: any): Observable<boolean> {
     return this.testNone(perms, (n => this.hasPermission(n, resource)));
   }
 

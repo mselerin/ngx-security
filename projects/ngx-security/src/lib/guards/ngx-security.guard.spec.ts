@@ -45,9 +45,9 @@ export const routes: Routes = [
     data: {
       security: {
         authenticated: true,
-        roles: ['X'],
-        groups: ['Y'],
-        permissions: ['Z'],
+        hasAllRoles: ['X'],
+        isMemberOfAll: ['Y'],
+        hasAllPermissions: ['Z'],
         redirectTo: '/access-denied',
         authorizedHandler: () => {
           AUTH_HANDLER = true;

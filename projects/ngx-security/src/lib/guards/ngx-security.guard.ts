@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -8,10 +8,10 @@ import {
   Router,
   RouterStateSnapshot
 } from '@angular/router';
-import { NgxSecurityService } from '../services/ngx-security.service';
-import { NgxSecurityGuardOptions } from '../models/ngx-security.model';
-import { merge, Observable } from 'rxjs';
-import { every, map, take, tap } from 'rxjs/operators';
+import {NgxSecurityService} from '../services/ngx-security.service';
+import {NgxSecurityGuardOptions} from '../models/ngx-security.model';
+import {merge, Observable, of} from 'rxjs';
+import {every, map, take, tap} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
@@ -52,27 +52,52 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
   private checkAccess(guardOptions: NgxSecurityGuardOptions): Observable<boolean> {
     let allObs$: Observable<boolean>[] = [];
 
-    if (guardOptions.authenticated === true) {
+    if (guardOptions.isAuthenticated === true) {
       allObs$.push(this.security.isAuthenticated());
     }
-    else if (guardOptions.authenticated === false) {
+    else if (guardOptions.isAuthenticated === false) {
       allObs$.push(this.security.isAuthenticated().pipe(map(auth => !auth)));
     }
 
-    if (Array.isArray(guardOptions.roles)) {
-      let obs$ = guardOptions.roles.map(n => this.security.hasRole(n));
-      allObs$.push(...obs$);
+
+    if (guardOptions.hasAllRoles) {
+      allObs$.push(this.security.hasAllRoles(guardOptions.hasAllRoles));
     }
 
-    if (Array.isArray(guardOptions.groups)) {
-      let obs$ = guardOptions.groups.map(n => this.security.isMemberOf(n));
-      allObs$.push(...obs$);
+    if (guardOptions.hasAnyRoles) {
+      allObs$.push(this.security.hasAnyRoles(guardOptions.hasAnyRoles));
     }
 
-    if (Array.isArray(guardOptions.permissions)) {
-      let obs$ = guardOptions.permissions.map(n => this.security.hasPermission(n));
-      allObs$.push(...obs$);
+    if (guardOptions.hasNotRoles) {
+      allObs$.push(this.security.hasNotRoles(guardOptions.hasNotRoles));
     }
+
+
+    if (guardOptions.isMemberOfAll) {
+      allObs$.push(this.security.isMemberOfAll(guardOptions.isMemberOfAll));
+    }
+
+    if (guardOptions.isMemberOfAny) {
+      allObs$.push(this.security.isMemberOfAny(guardOptions.isMemberOfAny));
+    }
+
+    if (guardOptions.isMemberOfNone) {
+      allObs$.push(this.security.isMemberOfNone(guardOptions.isMemberOfNone));
+    }
+
+
+    if (guardOptions.hasAllPermissions) {
+      allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions));
+    }
+
+    if (guardOptions.hasAnyPermissions) {
+      allObs$.push(this.security.hasAnyPermissions(guardOptions.hasAnyPermissions));
+    }
+
+    if (guardOptions.hasNotPermissions) {
+      allObs$.push(this.security.hasNotPermissions(guardOptions.hasNotPermissions));
+    }
+
 
     return merge(...allObs$).pipe(
       take(allObs$.length),

@@ -115,7 +115,7 @@ export class HasNotRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.security.hasNoRoles(this.input);
+    return this.security.hasNotRoles(this.input);
   }
 }
 
@@ -218,7 +218,7 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.security.hasNoPermissions(this.input, this.resource);
+    return this.security.hasNotPermissions(this.input, this.resource);
   }
 }
 
