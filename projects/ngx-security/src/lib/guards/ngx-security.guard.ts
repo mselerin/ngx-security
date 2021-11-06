@@ -59,6 +59,9 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
       allObs$.push(this.security.isAuthenticated().pipe(map(auth => !auth)));
     }
 
+    if (guardOptions.roles) {
+      allObs$.push(this.security.hasAllRoles(guardOptions.roles));
+    }
 
     if (guardOptions.hasAllRoles) {
       allObs$.push(this.security.hasAllRoles(guardOptions.hasAllRoles));
@@ -73,6 +76,10 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
     }
 
 
+    if (guardOptions.groups) {
+      allObs$.push(this.security.isMemberOfAll(guardOptions.groups));
+    }
+
     if (guardOptions.isMemberOfAll) {
       allObs$.push(this.security.isMemberOfAll(guardOptions.isMemberOfAll));
     }
@@ -85,6 +92,10 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
       allObs$.push(this.security.isMemberOfNone(guardOptions.isMemberOfNone));
     }
 
+
+    if (guardOptions.permissions) {
+      allObs$.push(this.security.hasAllPermissions(guardOptions.permissions));
+    }
 
     if (guardOptions.hasAllPermissions) {
       allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions));
