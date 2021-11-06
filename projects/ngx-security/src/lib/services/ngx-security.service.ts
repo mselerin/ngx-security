@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { NgxSecurityState } from '../models/ngx-security.model';
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, merge, Observable, of} from 'rxjs';
+import {NgxSecurityState} from '../models/ngx-security.model';
+import {every, first, take} from "rxjs/operators";
 
 
 @Injectable({ providedIn: 'root' })
@@ -60,6 +61,18 @@ export class NgxSecurityService {
       this.securityState.rolesChecker(role) : of(false);
   }
 
+  public hasAllRoles(roles: string | string[]): Observable<boolean> {
+    return this.testAll(roles, (r => this.hasRole(r)));
+  }
+
+  public hasAnyRoles(roles: string | string[]): Observable<boolean> {
+    return this.testAny(roles, (r => this.hasRole(r)));
+  }
+
+  public hasNoRoles(roles: string | string[]): Observable<boolean> {
+    return this.testNone(roles, (r => this.hasRole(r)));
+  }
+
 
 
 
@@ -74,6 +87,18 @@ export class NgxSecurityService {
   public isMemberOf(group: string): Observable<boolean> {
     return this.securityState.groupsChecker ?
       this.securityState.groupsChecker(group) : of(false);
+  }
+
+  public isMemberOfAll(groups: string | string[]): Observable<boolean> {
+    return this.testAll(groups, (g => this.isMemberOf(g)));
+  }
+
+  public isMemberOfAny(groups: string | string[]): Observable<boolean> {
+    return this.testAny(groups, (g => this.isMemberOf(g)));
+  }
+
+  public isMemberOfNone(groups: string | string[]): Observable<boolean> {
+    return this.testNone(groups, (g => this.isMemberOf(g)));
   }
 
 
@@ -91,6 +116,18 @@ export class NgxSecurityService {
       this.securityState.permissionsChecker(name, resource) : of(false);
   }
 
+  public hasAllPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testAll(perms, (n => this.hasPermission(n, resource)));
+  }
+
+  public hasAnyPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testAny(perms, (n => this.hasPermission(n, resource)));
+  }
+
+  public hasNoPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testNone(perms, (n => this.hasPermission(n, resource)));
+  }
+
 
 
   public updateState(partialState: Partial<NgxSecurityState>): void {
@@ -105,5 +142,56 @@ export class NgxSecurityService {
 
   public touch(): void {
     this.stateSource.next(null);
+  }
+
+
+
+  private testAll(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testEvery(values, fn, true);
+  }
+
+  private testNone(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testEvery(values, fn, false);
+  }
+
+  private testAny(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testFirst(values, fn, true);
+  }
+
+
+  private testEvery(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      take(obs$.length),
+      every(r => r === expected)
+    );
+  }
+
+  private testFirst(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      take(obs$.length),
+      first(r => r === expected, false)
+    );
   }
 }
