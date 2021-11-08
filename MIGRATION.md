@@ -1,6 +1,6 @@
 # Migration
 
-## 2.x to 3.x
+## from 2.x to 3.x
 ### NgxSecurityService
 * replace properties `authenticated` with the checker function `isAuthenticated()`
 * replace property `roles` with the checker function `hasRole(role: string)`
