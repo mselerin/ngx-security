@@ -8,7 +8,9 @@
 > :closed_lock_with_key: Security directives for your Angular application to show/hide elements based on a user roles / permissions.
 
 [View changelog](/projects/ngx-security/CHANGELOG.md)
+
 [View migration guide](/MIGRATION.md)
+
 
 ## Installation
 Install the library with:
