@@ -12,13 +12,6 @@ export interface NgxSecurityState {
 export interface NgxSecurityGuardOptions {
   isAuthenticated?: boolean;
 
-  /** @deprecated use hasAllRoles instead */
-  roles?: string | string[];
-  /** @deprecated use isMemberOfAll instead */
-  groups?: string | string[];
-  /** @deprecated use hasAllPermissions instead */
-  permissions?: string | string[];
-
   hasAllRoles?: string | string[];
   hasAnyRoles?: string | string[];
   hasNotRoles?: string | string[];

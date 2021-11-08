@@ -144,8 +144,8 @@ export const ROUTES: Routes = [
     canActivate: [ NgxSecurityGuard ],
     data: {
       security: {
-        authenticated: true,
-        roles: ['ADMIN'],
+        isAuthenticated: true,
+        hasAllRoles: ['ADMIN', 'USER'],
         redirectTo: '/access-denied',
         unauthorizedHandler: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => {
           console.warn('No, no, no, you cannot access this !');
