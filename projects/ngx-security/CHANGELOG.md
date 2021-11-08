@@ -9,7 +9,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * `secuHasPermissions` is still called twice when used with a resource ([629c92b](https://github.com/mselerin/ngx-security/commit/629c92b632bdbc6e4c192cf89f6d64e6e8c2e989))
-* force change detection when the authorization change ([0155877](https://github.com/mselerin/ngx-security/commit/01558778f1acbec562888660387ed4a0b3149c81))
 * force changes detection when the authorization change ([5c62ace](https://github.com/mselerin/ngx-security/commit/5c62aceea344108a34eb7fcadd6532fb53c37ff5))
 * when `secuHasPermissions` is used with a resource, the checker is called twice ([61077a4](https://github.com/mselerin/ngx-security/commit/61077a4edb3ffa77092b443d3b868ae3b0435d38))
 
@@ -22,11 +21,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * removed `roles`, `groups` and `permissions` from `NgxSecurityGuardOptions` and replace them with `hasAllXxx`, `hasAnyXxx` and `hasNotXxx` ([ef32f07](https://github.com/mselerin/ngx-security/commit/ef32f07dce2af4ffaab5868cda28c585f61d4da5))
-
-
-### Reverts
-
-* `roles`, `groups` and `permissions` inside `NgxSecurityGuardOptions` ([ed82b22](https://github.com/mselerin/ngx-security/commit/ed82b2202d4bbb38e3484eb3e12e025a6aa055e3))
 
 
 ### BREAKING CHANGES
