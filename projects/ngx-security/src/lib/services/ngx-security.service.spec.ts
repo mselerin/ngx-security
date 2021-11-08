@@ -1,7 +1,6 @@
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { fakeAsync, tick } from '@angular/core/testing';
 
 import { NgxSecurityService } from './ngx-security.service';
-import { NgxSecurityModule } from '../ngx-security.module';
 import { of } from 'rxjs';
 
 describe('NgxSecurityService', () => {
@@ -18,10 +17,10 @@ describe('NgxSecurityService', () => {
 
 
   it('should be false after reset', fakeAsync(() => {
-    security.setAuthenticatedChecker(() => true);
-    security.setRolesChecker(() => true);
-    security.setGroupsChecker(() => true);
-    security.setPermissionChecker(() => true);
+    security.setAuthenticatedChecker(() => of(true));
+    security.setRolesChecker(() => of(true));
+    security.setGroupsChecker(() => of(true));
+    security.setPermissionChecker(() => of(true));
 
     security.isAuthenticated().subscribe(d => expect(d).toBeTruthy());
     tick();
@@ -36,13 +35,13 @@ describe('NgxSecurityService', () => {
 
 
   it('when clear should be reset', fakeAsync(() => {
-    security.addRole('X');
-    security.addGroup('Y');
-    security.addPermission('Z');
+    security.setRolesChecker(() => of(true));
+    security.setGroupsChecker(() => of(true));
+    security.setPermissionChecker(() => of(true));
 
-    security.clearRoles();
-    security.clearGroups();
-    security.clearPermissions();
+    security.resetRolesChecker();
+    security.resetGroupsChecker();
+    security.resetPermissionChecker();
 
     security.hasRole('X').subscribe(d => expect(d).toBeFalsy());
     security.isMemberOf('Y').subscribe(d => expect(d).toBeFalsy());
@@ -84,16 +83,6 @@ describe('NgxSecurityService', () => {
 
 
 
-  it('with roles then hasRole should return correct value', fakeAsync(() => {
-    security.addRole('Y');
-    security.hasRole('X').subscribe(d => expect(d).toBeFalsy());
-    security.hasRole('Y').subscribe(d => expect(d).toBeTruthy());
-    security.hasRole('y').subscribe(d => expect(d).toBeTruthy());
-    tick();
-  }));
-
-
-
 
   it('with groupsChecker then isMemberOf should return correct value', fakeAsync(() => {
     security.setGroupsChecker(() => of(false));
@@ -103,14 +92,6 @@ describe('NgxSecurityService', () => {
     security.reset();
     security.setGroupsChecker(() => of(true));
     security.isMemberOf('X').subscribe(d => expect(d).toBeTruthy());
-    tick();
-  }));
-
-  it('with groups then isMemberOf should return correct value', fakeAsync(() => {
-    security.addGroup('Y');
-    security.isMemberOf('X').subscribe(d => expect(d).toBeFalsy());
-    security.isMemberOf('Y').subscribe(d => expect(d).toBeTruthy());
-    security.isMemberOf('y').subscribe(d => expect(d).toBeTruthy());
     tick();
   }));
 
@@ -125,14 +106,6 @@ describe('NgxSecurityService', () => {
     security.reset();
     security.setPermissionChecker(() => of(true));
     security.hasPermission('X', {foo: 'bar'}).subscribe(d => expect(d).toBeTruthy());
-    tick();
-  }));
-
-  it('with permissions then hasPermission should return correct value', fakeAsync(() => {
-    security.addPermission('Y');
-    security.hasPermission('X').subscribe(d => expect(d).toBeFalsy());
-    security.hasPermission('Y').subscribe(d => expect(d).toBeTruthy());
-    security.hasPermission('y').subscribe(d => expect(d).toBeTruthy());
     tick();
   }));
 });

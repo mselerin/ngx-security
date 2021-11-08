@@ -5,7 +5,7 @@ module.exports = {
   roots: ['<rootDir>/projects/ngx-security/src'],
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/projects/ngx-security/tsconfig.spec.json'
+      tsconfig: '<rootDir>/projects/ngx-security/tsconfig.spec.json'
     }
   }
 };

@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef} from '@angular/core';
-import { merge, Observable, of, Subscription } from 'rxjs';
-import { every, first, map, take, tap } from 'rxjs/operators';
-import { NgxSecurityService } from '../services/ngx-security.service';
+import {Observable, of, Subscription} from 'rxjs';
+import {map, take, tap} from 'rxjs/operators';
+import {NgxSecurityService} from '../services/ngx-security.service';
 
 @Directive({ selector: '[secuBaseSecurity]' })
 export class BaseSecurityDirective implements OnInit, OnDestroy {
@@ -26,10 +26,11 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   protected postConstruct(): void {}
 
   ngOnInit(): void {
-    if (this.security)
+    if (this.security) {
       this.stateSubscription = this.security.state$.pipe(
-        tap(() => { this.handleStateChange(); })
+        tap(() => this.handleStateChange())
       ).subscribe();
+    }
   }
 
   ngOnDestroy(): void {
@@ -64,43 +65,6 @@ export class BaseSecurityDirective implements OnInit, OnDestroy {
   /* istanbul ignore next */
   protected isAuthorized(): Observable<boolean> {
     return of(false);
-  }
-
-
-  protected testEvery(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
-    let obs$: Observable<boolean>[] = [];
-    if (Array.isArray(input)) {
-      obs$.push(...input.map(r => fn(r)));
-    }
-    else if (input) {
-      obs$.push(fn(input));
-    }
-    else {
-      obs$.push(of(false));
-    }
-
-    return merge(...obs$).pipe(
-      take(obs$.length),
-      every(r => r === expected)
-    );
-  }
-
-  protected testFirst(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
-    let obs$: Observable<boolean>[] = [];
-    if (Array.isArray(input)) {
-      obs$.push(...input.map(r => fn(r)));
-    }
-    else if (input) {
-      obs$.push(fn(input));
-    }
-    else {
-      obs$.push(of(false));
-    }
-
-    return merge(...obs$).pipe(
-      take(obs$.length),
-      first(r => r === expected, false)
-    );
   }
 }
 
@@ -137,7 +101,7 @@ export class HasRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasRole(n)), true);
+    return this.security.hasAllRoles(this.input);
   }
 }
 
@@ -151,7 +115,7 @@ export class HasNotRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasRole(n)), false);
+    return this.security.hasNotRoles(this.input);
   }
 }
 
@@ -165,7 +129,7 @@ export class HasAnyRolesDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testFirst(this.input, (n => this.security.hasRole(n)), true);
+    return this.security.hasAnyRoles(this.input);
   }
 }
 
@@ -180,7 +144,7 @@ export class IsMemberOfDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.isMemberOf(n)), true);
+    return this.security.isMemberOfAll(this.input);
   }
 }
 
@@ -194,7 +158,7 @@ export class IsNotMemberOfDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.isMemberOf(n)), false);
+    return this.security.isMemberOfNone(this.input);
   }
 }
 
@@ -208,7 +172,7 @@ export class IsMemberOfAnyDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testFirst(this.input, (n => this.security.isMemberOf(n)), true);
+    return this.security.isMemberOfAny(this.input);
   }
 }
 
@@ -226,14 +190,13 @@ export class HasPermissionsDirective extends BaseSecurityDirective {
   @Input('secuHasPermissionsResource') set testedResource(resource: any) {
     const resourceChanged = (this.resource !== resource);
     this.resource = resource;
-
     if (resourceChanged) {
       this.handleStateChange();
     }
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasPermission(n, this.resource)), true);
+    return this.security.hasAllPermissions(this.input, this.resource);
   }
 }
 
@@ -249,14 +212,13 @@ export class HasNotPermissionsDirective extends BaseSecurityDirective {
   @Input('secuHasNotPermissionsResource') set testedResource(resource: any) {
     const resourceChanged = (this.resource !== resource);
     this.resource = resource;
-
     if (resourceChanged) {
       this.handleStateChange();
     }
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testEvery(this.input, (n => this.security.hasPermission(n, this.resource)), false);
+    return this.security.hasNotPermissions(this.input, this.resource);
   }
 }
 
@@ -279,6 +241,6 @@ export class HasAnyPermissionsDirective extends BaseSecurityDirective {
   }
 
   isAuthorized(): Observable<boolean> {
-    return this.testFirst(this.input, (n => this.security.hasPermission(n, this.resource)), true);
+    return this.security.hasAnyPermissions(this.input, this.resource);
   }
 }

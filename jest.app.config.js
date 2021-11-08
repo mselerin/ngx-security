@@ -6,7 +6,7 @@ module.exports = {
   modulePaths: ['<rootDir>/dist'],
   globals: {
     'ts-jest': {
-      tsConfig: '<rootDir>/projects/demo/tsconfig.spec.json'
+      tsconfig: '<rootDir>/projects/demo/tsconfig.spec.json'
     }
   }
 };

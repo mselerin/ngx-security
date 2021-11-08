@@ -8,6 +8,7 @@ import { NgxSecurityGuard } from './ngx-security.guard';
 import { NgxSecurityModule } from '../ngx-security.module';
 import { NgxSecurityService } from '../services/ngx-security.service';
 import { of } from 'rxjs';
+import {BrowserDynamicTestingModule, platformBrowserDynamicTesting} from "@angular/platform-browser-dynamic/testing";
 
 
 @Component({
@@ -44,9 +45,9 @@ export const routes: Routes = [
     data: {
       security: {
         authenticated: true,
-        roles: ['X'],
-        groups: ['Y'],
-        permissions: ['Z'],
+        hasAllRoles: ['X'],
+        isMemberOfAll: ['Y'],
+        hasAllPermissions: ['Z'],
         redirectTo: '/access-denied',
         authorizedHandler: () => {
           AUTH_HANDLER = true;
@@ -80,6 +81,12 @@ describe('NgxSecurityGuard', () => {
     AUTH_HANDLER = false;
     UNAUTH_HANDLER = false;
 
+    TestBed.resetTestEnvironment();
+    TestBed.initTestEnvironment(
+      BrowserDynamicTestingModule,
+      platformBrowserDynamicTesting()
+    );
+
     TestBed.configureTestingModule({
       imports: [ NgxSecurityModule, TestSecuredRouterModule ],
       schemas: [ NO_ERRORS_SCHEMA ]
@@ -88,9 +95,9 @@ describe('NgxSecurityGuard', () => {
 
 
   beforeEach(() => {
-    security = TestBed.get(NgxSecurityService);
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
+    security = TestBed.inject(NgxSecurityService);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
 
     fixture = TestBed.createComponent(TestSecuredComponent);
     component = fixture.componentInstance;

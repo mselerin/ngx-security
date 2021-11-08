@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { NgxSecurityService } from 'ngx-security';
-import { SecurityService } from "./security.service";
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {NgxSecurityService} from 'ngx-security';
+import {SecurityService} from "./security.service";
 
 @Component({
   selector: 'app-root',
@@ -19,29 +19,18 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.ngxSecurity.updateState({
       authenticationChecker: () => this.security.isAuthenticated(),
+      groupsChecker: (group: string) => this.security.isMemberOf(group),
+      rolesChecker: (role: string) => this.security.hasRole(role),
       permissionsChecker: (perm: string, resource?: any) => this.security.hasPermission(perm, resource)
     });
   }
 
-
-  switchAuthentication() {
-    const authenticated = !this.security.authenticated$.value;
-    this.security.authenticated$.next(authenticated);
-
-    if (authenticated) {
-      this.ngxSecurity.updateState({
-        roles: ['ADMIN', 'USER'],
-        groups: ['GROUP_A', 'GROUP_B']
-      });
-    } else {
-      this.ngxSecurity.updateState({
-        roles: [],
-        groups: []
-      });
-    }
+  switchAuthentication(): void {
+    this.security.switchAuthentication();
+    this.ngxSecurity.touch();
   }
 
-  toggleFoo() {
+  toggleFoo(): void {
     this.foo.value = this.foo.value === 'foo' ? 'bar' : 'foo';
     this.foo = {...this.foo};
   }

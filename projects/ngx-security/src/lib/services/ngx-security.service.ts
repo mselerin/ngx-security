@@ -1,15 +1,7 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, isObservable, Observable, of } from 'rxjs';
-import { CheckerResult, NgxSecurityState } from '../models/ngx-security.model';
-
-
-export function asObservable(obs: CheckerResult): Observable<boolean> {
-  if (isObservable(obs)) {
-    return obs;
-  }
-
-  return of(obs);
-}
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, merge, Observable, of} from 'rxjs';
+import {NgxSecurityState} from '../models/ngx-security.model';
+import {every, first, take} from "rxjs/operators";
 
 
 @Injectable({ providedIn: 'root' })
@@ -18,16 +10,10 @@ export class NgxSecurityService {
   public readonly state$: Observable<void>;
 
   private readonly INITIAL_STATE: NgxSecurityState = {
-    authenticated: false,
-
-    roles: [],
-    groups: [],
-    permissions: [],
-
-    authenticationChecker: null,
-    rolesChecker: null,
-    groupsChecker: null,
-    permissionsChecker: null
+    authenticationChecker: () => of(false),
+    rolesChecker: () => of(false),
+    groupsChecker: () => of(false),
+    permissionsChecker: () => of(false)
   };
 
   private securityState: NgxSecurityState;
@@ -43,132 +29,103 @@ export class NgxSecurityService {
   }
 
 
-  public setAuthenticatedChecker(fn: () => CheckerResult): void {
+  public setAuthenticatedChecker(fn: () => Observable<boolean>): void {
     this.updateState({ authenticationChecker: fn });
   }
 
+  public resetAuthenticatedChecker(): void {
+    this.setAuthenticatedChecker(this.INITIAL_STATE.authenticationChecker);
+  }
+
   public setAuthenticated(value: boolean): void {
-    this.updateState({ authenticated: value });
+    this.setAuthenticatedChecker(() => of(value));
   }
 
   public isAuthenticated(): Observable<boolean> {
-    // Check inside state
-    const check = this.securityState.authenticated;
-    if (check) {
-      return of(check);
-    }
-
-    // Check with callback
-    if (this.securityState.authenticationChecker) {
-      return asObservable(this.securityState.authenticationChecker());
-    }
-
-    // Default
-    return of(this.securityState.authenticated);
+    return this.securityState.authenticationChecker ?
+      this.securityState.authenticationChecker() : of(false);
   }
 
 
 
-  public setRolesChecker(fn: (name: string) => CheckerResult): void {
+  public setRolesChecker(fn: (name: string) => Observable<boolean>): void {
     this.updateState({ rolesChecker: fn });
   }
 
-  public addRole(role: string): void {
-    this.updateState({ roles: [...this.securityState.roles, role] });
-  }
-
-  public setRoles(roles: string[]): void {
-    this.updateState({ roles: roles || [] });
-  }
-
-  public clearRoles(): void {
-    this.setRoles([]);
+  public resetRolesChecker(): void {
+    this.setRolesChecker(this.INITIAL_STATE.rolesChecker);
   }
 
   public hasRole(role: string): Observable<boolean> {
-    // Check inside state
-    const check = this.securityState.roles.some((r: string) => r.toUpperCase() === role.toUpperCase());
-    if (check) {
-      return of(check);
-    }
+    return this.securityState.rolesChecker ?
+      this.securityState.rolesChecker(role) : of(false);
+  }
 
-    // Check with callback
-    if (this.securityState.rolesChecker) {
-      return asObservable(this.securityState.rolesChecker(role));
-    }
+  public hasAllRoles(roles: string | string[]): Observable<boolean> {
+    return this.testAll(roles, (r => this.hasRole(r)));
+  }
 
-    // Default
-    return of(false);
+  public hasAnyRoles(roles: string | string[]): Observable<boolean> {
+    return this.testAny(roles, (r => this.hasRole(r)));
+  }
+
+  public hasNotRoles(roles: string | string[]): Observable<boolean> {
+    return this.testNone(roles, (r => this.hasRole(r)));
   }
 
 
 
 
-  public setGroupsChecker(fn: (name: string) => CheckerResult): void {
+  public setGroupsChecker(fn: (name: string) => Observable<boolean>): void {
     this.updateState({ groupsChecker: fn });
   }
 
-  public addGroup(group: string): void {
-    this.updateState({ groups: [...this.securityState.groups, group] });
-  }
-
-  public setGroups(groups: string[]): void {
-    this.updateState({ groups: groups || [] });
-  }
-
-  public clearGroups(): void {
-    this.setGroups([]);
+  public resetGroupsChecker(): void {
+    this.setGroupsChecker(this.INITIAL_STATE.groupsChecker);
   }
 
   public isMemberOf(group: string): Observable<boolean> {
-    // Check inside state
-    const check = this.securityState.groups.some((r: string) => r.toUpperCase() === group.toUpperCase());
-    if (check) {
-      return of(check);
-    }
+    return this.securityState.groupsChecker ?
+      this.securityState.groupsChecker(group) : of(false);
+  }
 
-    // Check with callback
-    if (this.securityState.groupsChecker) {
-      return asObservable(this.securityState.groupsChecker(group));
-    }
+  public isMemberOfAll(groups: string | string[]): Observable<boolean> {
+    return this.testAll(groups, (g => this.isMemberOf(g)));
+  }
 
-    // Default
-    return of(false);
+  public isMemberOfAny(groups: string | string[]): Observable<boolean> {
+    return this.testAny(groups, (g => this.isMemberOf(g)));
+  }
+
+  public isMemberOfNone(groups: string | string[]): Observable<boolean> {
+    return this.testNone(groups, (g => this.isMemberOf(g)));
   }
 
 
 
-
-  public setPermissionChecker(fn: (name: string, resource?: any) => CheckerResult): void {
+  public setPermissionChecker(fn: (name: string, resource?: any) => Observable<boolean>): void {
     this.updateState({ permissionsChecker: fn });
   }
 
-  public addPermission(role: string): void {
-    this.updateState({ permissions: [...this.securityState.permissions, role] });
-  }
-
-  public setPermissions(permissions: string[]): void {
-    this.updateState({ permissions: permissions || [] });
-  }
-
-  public clearPermissions(): void {
-    this.setPermissions([]);
+  public resetPermissionChecker(): void {
+    this.setPermissionChecker(this.INITIAL_STATE.permissionsChecker);
   }
 
   public hasPermission(name: string, resource?: any): Observable<boolean> {
-    // Check inside state
-    const check = this.securityState.permissions.some((r: string) => r.toUpperCase() === name.toUpperCase());
-    if (check) {
-      return of(check);
-    }
+    return this.securityState.permissionsChecker ?
+      this.securityState.permissionsChecker(name, resource) : of(false);
+  }
 
-    // Check with callback
-    if (this.securityState.permissionsChecker) {
-      return asObservable(this.securityState.permissionsChecker(name, resource));
-    }
+  public hasAllPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testAll(perms, (n => this.hasPermission(n, resource)));
+  }
 
-    // Default
-    return of(false);
+  public hasAnyPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testAny(perms, (n => this.hasPermission(n, resource)));
+  }
+
+  public hasNotPermissions(perms: string | string[], resource?: any): Observable<boolean> {
+    return this.testNone(perms, (n => this.hasPermission(n, resource)));
   }
 
 
@@ -185,5 +142,56 @@ export class NgxSecurityService {
 
   public touch(): void {
     this.stateSource.next(null);
+  }
+
+
+
+  private testAll(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testEvery(values, fn, true);
+  }
+
+  private testNone(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testEvery(values, fn, false);
+  }
+
+  private testAny(values: string | string[], fn: (name: string) => Observable<boolean>): Observable<boolean> {
+    return this.testFirst(values, fn, true);
+  }
+
+
+  private testEvery(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      take(obs$.length),
+      every(r => r === expected)
+    );
+  }
+
+  private testFirst(input: string | string[], fn: (name: string) => Observable<boolean>, expected: boolean): Observable<boolean> {
+    let obs$: Observable<boolean>[] = [];
+    if (Array.isArray(input)) {
+      obs$.push(...input.map(r => fn(r)));
+    }
+    else if (input) {
+      obs$.push(fn(input));
+    }
+    else {
+      obs$.push(of(false));
+    }
+
+    return merge(...obs$).pipe(
+      take(obs$.length),
+      first(r => r === expected, false)
+    );
   }
 }
