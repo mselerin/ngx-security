@@ -1,28 +1,44 @@
-import { NgModule } from '@angular/core';
-import * as Security from './directives/ngx-security.directive';
+import {NgModule} from '@angular/core';
+import * as SecurityDirectives from './directives/ngx-security.directive';
+import * as SecurityPipes from './pipes/ngx-security.pipe';
 
 const PUBLIC_DIRECTIVES = [
-  Security.IsAuthenticatedDirective,
-  Security.IsAnonymousDirective,
+  SecurityDirectives.IsAuthenticatedDirective,
+  SecurityDirectives.IsAnonymousDirective,
 
-  Security.HasRolesDirective,
-  Security.HasNotRolesDirective,
-  Security.HasAnyRolesDirective,
+  SecurityDirectives.HasRolesDirective,
+  SecurityDirectives.HasNotRolesDirective,
+  SecurityDirectives.HasAnyRolesDirective,
 
-  Security.IsMemberOfDirective,
-  Security.IsNotMemberOfDirective,
-  Security.IsMemberOfAnyDirective,
+  SecurityDirectives.IsMemberOfDirective,
+  SecurityDirectives.IsNotMemberOfDirective,
+  SecurityDirectives.IsMemberOfAnyDirective,
 
-  Security.HasPermissionsDirective,
-  Security.HasNotPermissionsDirective,
-  Security.HasAnyPermissionsDirective
+  SecurityDirectives.HasPermissionsDirective,
+  SecurityDirectives.HasNotPermissionsDirective,
+  SecurityDirectives.HasAnyPermissionsDirective
+];
+
+const PUBLIC_PIPES = [
+  SecurityPipes.HasRolesPipe,
+  SecurityPipes.HasNotRolesPipe,
+  SecurityPipes.HasAnyRolesPipe,
+
+  SecurityPipes.IsMemberOfPipe,
+  SecurityPipes.IsNotMemberOfPipe,
+  SecurityPipes.IsMemberOfAnyPipe,
+
+  SecurityPipes.HasPermissionsPipe,
+  SecurityPipes.HasNotPermissionsPipe,
+  SecurityPipes.HasAnyPermissionsPipe
 ];
 
 @NgModule({
   imports: [],
   declarations: [
-    Security.BaseSecurityDirective,
-    ...PUBLIC_DIRECTIVES
+    SecurityDirectives.BaseSecurityDirective,
+    ...PUBLIC_DIRECTIVES,
+    ...PUBLIC_PIPES
   ],
   exports: PUBLIC_DIRECTIVES
 })
