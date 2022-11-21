@@ -60,3 +60,24 @@
   </ng-template>
 </div>
 
+
+<div>
+  <b>Pipe HasRoles('ADMIN', 'USER') ?</b>&nbsp;
+  <span>{{['USER','ADMIN'] | secuHasRoles | async}}</span>
+</div>
+<div>
+  <b>Pipe HasAnyRoles('X', 'Y', 'Z') ?</b>&nbsp;
+  <span>{{['X', 'Y', 'Z'] | secuHasAnyRoles | async}}</span>
+</div>
+<div>
+  <b>Pipe IsMemberOf('GROUP_A') ?</b>&nbsp;
+  <span>{{['GROUP_A'] |  secuIsMemberOf | async}}</span>
+</div>
+<div>
+  <b>Pipe HasPermission('simple') ?</b>&nbsp;
+  <span>{{['simple'] |  secuHasPermissions | async}}</span>
+</div>
+<div>
+  <b>Pipe HasPermission('foo', {{'{'}}foo: {{foo.value}}{{'}'}}) ?</b>&nbsp;
+  <span>{{'foo' |  secuHasPermissions:foo | async}}</span>
+</div>
