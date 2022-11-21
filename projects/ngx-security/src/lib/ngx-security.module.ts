@@ -40,6 +40,9 @@ const PUBLIC_PIPES = [
     ...PUBLIC_DIRECTIVES,
     ...PUBLIC_PIPES
   ],
-  exports: PUBLIC_DIRECTIVES
+  exports: [
+    ...PUBLIC_DIRECTIVES,
+    ...PUBLIC_PIPES
+  ]
 })
 export class NgxSecurityModule { }
