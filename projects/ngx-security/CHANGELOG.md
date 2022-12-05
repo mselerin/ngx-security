@@ -10,6 +10,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * add security pipes ([147854c](https://github.com/mselerin/ngx-security/commit/147854ca6b89d89c42b4281211d24287f8c3c49b))
 
+### Contributors
+
+* [rombru](https://github.com/rombru)
 
 
 
