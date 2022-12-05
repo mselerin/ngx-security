@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0](https://github.com/mselerin/ngx-security/compare/ngx-security@3.0.0...ngx-security@3.1.0) (2022-12-05)
+
+
+### Features
+
+* add security pipes ([147854c](https://github.com/mselerin/ngx-security/commit/147854ca6b89d89c42b4281211d24287f8c3c49b))
+* add security pipes tests ([5ebad1b](https://github.com/mselerin/ngx-security/commit/5ebad1b0ccbcca3215ac368613fed59037470b64))
+* export security pipes ([22c8e71](https://github.com/mselerin/ngx-security/commit/22c8e711220954c5b37ee6a75ac0489f3962b9df))
+* rework security pipes to handle security state change ([f56ca9b](https://github.com/mselerin/ngx-security/commit/f56ca9b38a1edd84b10160bdb158e41977bcbe19))
+
+
+
+
+
+
 # [3.0.0](https://github.com/mselerin/ngx-security/compare/ngx-security@2.4.6...ngx-security@3.0.0) (2021-11-08)
 
 
