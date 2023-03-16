@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/mselerin/ngx-security/compare/ngx-security@3.1.0...ngx-security@3.2.0) (2023-03-16)
+
+
+### Features
+
+* expose `NgxSecurityGuard.canAccess` + add `NgxSecurityGuard.handle` ([92d506d](https://github.com/mselerin/ngx-security/commit/92d506dbcf8646409e707a146aecaaae7b41690d))
+
+
+
+
+
+
 # [3.1.0](https://github.com/mselerin/ngx-security/compare/ngx-security@3.0.0...ngx-security@3.1.0) (2022-12-05)
 
 
