@@ -1,5 +1,8 @@
-import { ActivatedRouteSnapshot, Route, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Route, RouterStateSnapshot, UrlSegment } from '@angular/router';
 import { Observable } from 'rxjs';
+
+export type CurrentRoute = Route | ActivatedRouteSnapshot;
+export type RouteUrl = RouterStateSnapshot | UrlSegment[];
 
 export interface NgxSecurityState {
   authenticationChecker: () => Observable<boolean>;
@@ -25,6 +28,6 @@ export interface NgxSecurityGuardOptions {
   hasNotPermissions?: string | string[];
 
   redirectTo?: string;
-  authorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;
-  unauthorizedHandler?: (route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot) => void;
+  authorizedHandler?: (route?: CurrentRoute, state?: RouteUrl) => void;
+  unauthorizedHandler?: (route?: CurrentRoute, state?: RouteUrl) => void;
 }

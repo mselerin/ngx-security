@@ -6,50 +6,56 @@ import {
   CanLoad,
   Route,
   Router,
-  RouterStateSnapshot
+  RouterStateSnapshot, UrlTree
 } from '@angular/router';
 import {NgxSecurityService} from '../services/ngx-security.service';
-import {NgxSecurityGuardOptions} from '../models/ngx-security.model';
-import {merge, Observable, of} from 'rxjs';
-import {every, map, take, tap} from 'rxjs/operators';
+import {CurrentRoute, NgxSecurityGuardOptions, RouteUrl} from '../models/ngx-security.model';
+import {merge, Observable} from 'rxjs';
+import {every, map, take} from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
-export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild
-{
+export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild {
   constructor(
     protected readonly security: NgxSecurityService,
     protected readonly router: Router
   ) {}
 
+  canLoad(route: Route): Observable<boolean | UrlTree> { return this.canAccess(route); }
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> { return this.canAccess(route, state); }
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> { return this.canAccess(route, state); }
 
-  canLoad(route: Route): Observable<boolean> { return this.canAccess(route); }
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> { return this.canAccess(route, state); }
-  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> { return this.canAccess(route, state); }
-
-
-  protected canAccess(route: Route | ActivatedRouteSnapshot, state?: RouterStateSnapshot): Observable<boolean> {
+  canAccess(route: CurrentRoute, state?: RouteUrl): Observable<boolean | UrlTree> {
     const guardOptions = !!route && route.data ? route.data['security'] as NgxSecurityGuardOptions : {};
+    return this.handle(guardOptions, route, state);
+  }
+
+  handle(guardOptions: NgxSecurityGuardOptions, route?: CurrentRoute, state?: RouteUrl): Observable<boolean | UrlTree> {
     return this.checkAccess(guardOptions).pipe(
-      tap(access => {
+      map(access => {
+        let returnValue: boolean | UrlTree = access;
+
         if (!access) {
           if (guardOptions.unauthorizedHandler) {
             guardOptions.unauthorizedHandler(route, state);
           }
 
-          if (guardOptions.redirectTo)
-            this.router.navigateByUrl(guardOptions.redirectTo);
+          if (guardOptions.redirectTo) {
+            returnValue = this.router.parseUrl(guardOptions.redirectTo);
+          }
         }
         else {
           if (guardOptions.authorizedHandler) {
             guardOptions.authorizedHandler(route, state);
           }
         }
+
+        return returnValue;
       })
     );
   }
 
 
-  private checkAccess(guardOptions: NgxSecurityGuardOptions): Observable<boolean> {
+  protected checkAccess(guardOptions: NgxSecurityGuardOptions): Observable<boolean> {
     let allObs$: Observable<boolean>[] = [];
 
     if (guardOptions.isAuthenticated === true) {
