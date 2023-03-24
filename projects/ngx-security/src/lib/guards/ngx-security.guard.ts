@@ -92,15 +92,15 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild 
 
 
     if (guardOptions.hasAllPermissions) {
-      allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions));
+      allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions, guardOptions.resource));
     }
 
     if (guardOptions.hasAnyPermissions) {
-      allObs$.push(this.security.hasAnyPermissions(guardOptions.hasAnyPermissions));
+      allObs$.push(this.security.hasAnyPermissions(guardOptions.hasAnyPermissions, guardOptions.resource));
     }
 
     if (guardOptions.hasNotPermissions) {
-      allObs$.push(this.security.hasNotPermissions(guardOptions.hasNotPermissions));
+      allObs$.push(this.security.hasNotPermissions(guardOptions.hasNotPermissions, guardOptions.resource));
     }
 
 
