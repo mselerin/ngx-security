@@ -28,6 +28,7 @@ export interface NgxSecurityGuardOptions {
   hasNotPermissions?: string | string[];
 
   resource?: any;
+  resourceResolver?: (route?: CurrentRoute, state?: RouteUrl) => any;
 
   redirectTo?: string;
   authorizedHandler?: (route?: CurrentRoute, state?: RouteUrl) => void;

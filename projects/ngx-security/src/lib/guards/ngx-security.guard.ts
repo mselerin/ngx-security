@@ -30,7 +30,7 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild 
   }
 
   handle(guardOptions: NgxSecurityGuardOptions, route?: CurrentRoute, state?: RouteUrl): Observable<boolean | UrlTree> {
-    return this.checkAccess(guardOptions).pipe(
+    return this.checkAccess(guardOptions, route, state).pipe(
       map(access => {
         let returnValue: boolean | UrlTree = access;
 
@@ -55,7 +55,7 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild 
   }
 
 
-  protected checkAccess(guardOptions: NgxSecurityGuardOptions): Observable<boolean> {
+  protected checkAccess(guardOptions: NgxSecurityGuardOptions, route?: CurrentRoute, state?: RouteUrl): Observable<boolean> {
     let allObs$: Observable<boolean>[] = [];
 
     if (guardOptions.isAuthenticated === true) {
@@ -64,6 +64,7 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild 
     else if (guardOptions.isAuthenticated === false) {
       allObs$.push(this.security.isAuthenticated().pipe(map(auth => !auth)));
     }
+
 
     if (guardOptions.hasAllRoles) {
       allObs$.push(this.security.hasAllRoles(guardOptions.hasAllRoles));
@@ -91,16 +92,21 @@ export class NgxSecurityGuard implements CanLoad, CanActivate, CanActivateChild 
     }
 
 
+    let resource = guardOptions.resource;
+    if (guardOptions.resourceResolver) {
+      resource = guardOptions.resourceResolver(route, state);
+    }
+
     if (guardOptions.hasAllPermissions) {
-      allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions, guardOptions.resource));
+      allObs$.push(this.security.hasAllPermissions(guardOptions.hasAllPermissions, resource));
     }
 
     if (guardOptions.hasAnyPermissions) {
-      allObs$.push(this.security.hasAnyPermissions(guardOptions.hasAnyPermissions, guardOptions.resource));
+      allObs$.push(this.security.hasAnyPermissions(guardOptions.hasAnyPermissions, resource));
     }
 
     if (guardOptions.hasNotPermissions) {
-      allObs$.push(this.security.hasNotPermissions(guardOptions.hasNotPermissions, guardOptions.resource));
+      allObs$.push(this.security.hasNotPermissions(guardOptions.hasNotPermissions, resource));
     }
 
 
