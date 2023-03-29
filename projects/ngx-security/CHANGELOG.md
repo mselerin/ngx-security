@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0](https://github.com/mselerin/ngx-security/compare/ngx-security@3.2.0...ngx-security@3.3.0) (2023-03-29)
+
+
+### Features
+
+* add `NgxSecurityGuardOptions.resource` to allow guard permissions with resources ([ac5432e](https://github.com/mselerin/ngx-security/commit/ac5432e2335e68fcda69c460f2f1f6caf720dc8e))
+* add `NgxSecurityGuardOptions.resourceResolver` ([3dae346](https://github.com/mselerin/ngx-security/commit/3dae346d18afbe0ec3faa0b0f7e70176a7f5168c))
+
+
+
+
+
 # [3.2.0](https://github.com/mselerin/ngx-security/compare/ngx-security@3.1.0...ngx-security@3.2.0) (2023-03-16)
 
 
